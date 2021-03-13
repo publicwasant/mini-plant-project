@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/controllers/redirect/redirect.dart';
+import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/logo/logo.dart';
 import 'package:mp_v1_0/controllers/spin/spin.dart';
@@ -38,26 +39,26 @@ class _GetStartedPageState extends State<GetStartedPage> {
     this.logo = Logo();
 
     this.loginBut = new Button(
-      text: 'เข้าสู่ระบบ',
+      title: 'เข้าสู่ระบบ',
       size: 'medium',
-      colors: [Colors.green, Colors.white],
+      colors: theme.button['loginColors'],
       onTap: () async {
         Redirect(this.context, '/get-started/login');
       }
     );
 
     this.registerBut = new Button(
-      text: 'สมัครสมาชิก',
+      title: 'สมัครสมาชิก',
       size: 'medium',
-      onTap: () {
+      onTap: () async {
         Redirect(this.context, '/get-started/register');
       }
     );
 
     this.notNowBut = new Button(
-      text: 'ไม่ใช่ตอนนี้',
+      title: 'ไม่ใช่ตอนนี้',
       size: 'small',
-      colors: [Colors.white, Colors.grey],
+      colors: theme.button['notNowColors'],
       onTap: () {
       }
     );

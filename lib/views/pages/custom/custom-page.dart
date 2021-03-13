@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:mp_v1_0/controllers/button/button-panel.dart';
+import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
+import 'package:mp_v1_0/controllers/button/button-tab.dart';
 
 Color BackgroundColor = Colors.grey[100];
 Color FontColor = Colors.grey[800];
@@ -36,10 +37,10 @@ class _CustomPageState extends State<CustomPage> {
    * 1 = customer, general users
    */
 
-  ButtonPanel plantButBar;
-  ButtonPanel marbleButBar;
-  ButtonPanel potButBar;
-  ButtonPanel cardButBar;
+  ButtonTab plantButTab;
+  ButtonTab marbleButTab;
+  ButtonTab potButTab;
+  ButtonTab cardButTab;
 
   Button basketBut;
   Button buyBut;
@@ -49,28 +50,28 @@ class _CustomPageState extends State<CustomPage> {
     this.data = data;
     this.userStatus = (data['userStatus'] != null) ? data['userStatus'] : 1;
     
-    plantButBar = new ButtonPanel(
+    plantButTab = new ButtonTab(
       icon: Icons.grass,
       title: 'ต้นไม้เล็ก',
       subTitle: '(เลือกสินค้าประเภทต้นไม้)',
-      size: 'medium'
+      size: 'medium',
     );
 
-    marbleButBar = new ButtonPanel(
+    marbleButTab = new ButtonTab(
       icon: Icons.grain,
       title: 'หินตกแต่ง',
       subTitle: '(เลือกสินค้าประเภทหินตกแต่ง)',
       size: 'medium'
     );
 
-    potButBar = new ButtonPanel(
+    potButTab = new ButtonTab(
       icon: Icons.panorama_vertical,
       title: 'กระถาง',
       subTitle: '(เลือกสินค้าประเภทกระถาง)',
       size: 'medium'
     );
 
-    cardButBar = new ButtonPanel(
+    cardButTab = new ButtonTab(
       icon: Icons.settings_system_daydream,
       title: 'การ์ด',
       subTitle: '(เลือกสินค้าประเภทการ์ด)',
@@ -79,10 +80,10 @@ class _CustomPageState extends State<CustomPage> {
 
     this.basketBut = new Button(
       icon: Icons.shopping_cart,
-      text: 'ยิบใส่ตะกล้า',
+      title: 'ยิบใส่ตะกล้า',
       size: 'small',
       border: 1.0,
-      colors: [BackgroundColor, Colors.lightBlue[800], Colors.lightBlue[800]],
+      colors: theme.button['basketColors'],
       onTap: () async {
         if (!this.basketBut.loading.isBegin) {
           this.basketBut.loading.begin(then: () {
@@ -100,9 +101,9 @@ class _CustomPageState extends State<CustomPage> {
 
     this.buyBut = new Button(
       icon: Icons.shopping_basket,
-      text: 'ซื้อเลย',
+      title: 'ซื้อเลย',
       size: 'small',
-      colors: [Colors.lightBlue[800], Colors.white, Colors.white],
+      colors: theme.button['buyColors'],
       onTap: () async {
         if (!this.buyBut.loading.isBegin) {
           this.buyBut.loading.begin(then: () {
@@ -120,9 +121,9 @@ class _CustomPageState extends State<CustomPage> {
 
     this.saveBut = new Button(
       icon: Icons.add_circle,
-      text: 'บันทึก',
+      title: 'บันทึก',
       size: 'small',
-      colors: [Colors.lightBlue[800], Colors.white, Colors.white],
+      colors: theme.button['saveColors'],
       onTap: () async {
         if (!this.saveBut.loading.isBegin) {
           this.saveBut.loading.begin(then: () {
@@ -141,14 +142,13 @@ class _CustomPageState extends State<CustomPage> {
 
   @override
   Widget build(BuildContext context) {
-    final butPanelWidth = MediaQuery.of(context).size.width*0.90;
+    this.plantButTab.size[0] = MediaQuery.of(context).size.width*0.90;
+    this.marbleButTab.size[0] = MediaQuery.of(context).size.width*0.90;
+    this.potButTab.size[0] = MediaQuery.of(context).size.width*0.90;
+    this.cardButTab.size[0] = MediaQuery.of(context).size.width*0.90;
 
     return Scaffold(
       backgroundColor: BackgroundColor,
-      appBar: new AppBar(
-        title: Text('กำหนดเอง'),
-        automaticallyImplyLeading: false,
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget> [
@@ -157,6 +157,7 @@ class _CustomPageState extends State<CustomPage> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: <Widget> [
+                  SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
@@ -175,25 +176,25 @@ class _CustomPageState extends State<CustomPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
-                      this.plantButBar.build(width: butPanelWidth)
+                      this.plantButTab.build()
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
-                      this.marbleButBar.build(width: butPanelWidth)
+                      this.marbleButTab.build()
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
-                      this.potButBar.build(width: butPanelWidth)
+                      this.potButTab.build()
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
-                      this.cardButBar.build(width: butPanelWidth)
+                      this.cardButTab.build()
                     ],
                   ),
                 ],

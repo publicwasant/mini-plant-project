@@ -42,8 +42,8 @@ class _MainMenuPageState extends State<MainMenuPage> {
     this.imgBut = new ButtonOval(
       size: 'small',
       border: 2.0,
-      image: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Shayh_Muhammad_Sodiq.jpg',
-      imageVisitExcept: true,
+      imgURL: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Shayh_Muhammad_Sodiq.jpg',
+      imgVisitExcept: true,
       onTap: () {
      }
     );

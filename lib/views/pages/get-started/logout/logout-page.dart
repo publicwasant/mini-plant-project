@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/controllers/button/button.dart';
+import 'package:mp_v1_0/controllers/theme/theme.dart';
 
 class LogoutPage extends StatefulWidget {
   dynamic data;
@@ -24,10 +25,10 @@ class _LogoutPageState extends State<LogoutPage> {
   _LogoutPageState ({dynamic data}) {
     this.data = data;
     this.logoutButton = new Button(
-      text: 'ออกจากระบบ',
+      title: 'ออกจากระบบ',
       size: 'medium', 
-      colors: [Colors.red, Colors.white],
-      onTap: () {
+      colors: theme.button['logoutColor'],
+      onTap: () async {
         Navigator.pushReplacementNamed(this.context, '/get-started');
     });
   }

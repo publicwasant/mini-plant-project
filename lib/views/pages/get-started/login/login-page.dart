@@ -10,6 +10,7 @@ import 'package:mp_v1_0/controllers/logo/logo.dart';
 import 'package:mp_v1_0/controllers/spin/spin.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
+import 'package:mp_v1_0/controllers/theme/theme.dart';
 
 class LoginPage extends StatefulWidget {
   dynamic data;
@@ -49,9 +50,9 @@ class _LoginPageState extends State<LoginPage> {
     
     this.loginButton = new Button(
       icon: Icons.login,
-      text: 'เข้าสู่ระบบ', 
+      title: 'เข้าสู่ระบบ', 
       size: 'medium', 
-      colors: [Colors.green, Colors.white],
+      colors: theme.button['loginColors'],
       onTap: () async {
         Write('login', {
           'email': this.emailBox.controller.text,

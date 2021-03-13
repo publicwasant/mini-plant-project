@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/models/product-model/product-model.dart';
 import 'package:mp_v1_0/controllers/image/image-slider.dart';
+import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 
 Color BackgroundColor = Colors.grey[100];
@@ -72,10 +73,10 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
 
     this.basketBut = new Button(
       icon: Icons.shopping_cart,
-      text: 'ยิบใส่ตะกล้า',
+      title: 'ยิบใส่ตะกล้า',
       size: 'small',
       border: 1.0,
-      colors: [BackgroundColor, Colors.lightBlue[800], Colors.lightBlue[800]],
+      colors: theme.button['basketColors'],
       onTap: () async {
         if (!this.basketBut.loading.isBegin) {
           this.basketBut.loading.begin(then: () {
@@ -93,9 +94,8 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
 
     this.buyBut = new Button(
       icon: Icons.shopping_basket,
-      text: 'ซื้อเลย',
+      title: 'ซื้อเลย',
       size: 'small',
-      colors: [Colors.lightBlue[800], Colors.white, Colors.white],
       onTap: () async {
         if (!this.buyBut.loading.isBegin) {
           this.buyBut.loading.begin(then: () {
@@ -112,9 +112,8 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
     );
 
     this.chooseBut = new Button(
-      text: 'เลือก',
+      title: 'เลือก',
       size: 'small',
-      colors: [Colors.lightBlue[800], Colors.white, Colors.white],
       onTap: () async {
         if (!this.chooseBut.loading.isBegin) {
           this.chooseBut.loading.begin(then: () {

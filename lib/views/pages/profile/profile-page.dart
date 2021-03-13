@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/button/button-oval.dart';
 import 'package:mp_v1_0/controllers/dialog/dialog-mini.dart';
@@ -44,8 +45,8 @@ class _ProfilePageState extends State<ProfilePage> {
     this.imgBut = new ButtonOval(
       size: 'large',
       border: 4.0,
-      image: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Shayh_Muhammad_Sodiq.jpg',
-      imageVisitExcept: true,
+      imgURL: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Shayh_Muhammad_Sodiq.jpg',
+      imgVisitExcept: true,
       onTap: () async {
         if (!this.imgBut.loading.isBegin) {
           this.imgBut.loading.begin(then: () {
@@ -70,20 +71,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
     this.editBut = new Button(
       icon: Icons.mode_edit,
-      text: 'แก้ไขข้อมูล',
+      title: 'แก้ไขข้อมูล',
       size: 'small',
       border: 1.0,
-      colors: [BackgroundColor, Colors.lightBlue[800], Colors.lightBlue[800]],
+      colors: theme.button['editColors'],
       onTap: () {
       }
     );
 
     this.logoutBut = new Button(
       icon: Icons.logout,
-      text: 'ออกจากระบบ',
+      title: 'ออกจากระบบ',
       size: 'small',
       border: 0.0,
-      colors: [Colors.red, Colors.white, Colors.red],
+      colors: theme.button['logoutColors'],
       onTap: () async {
         this.logoutDia.show(this.context);
       }
