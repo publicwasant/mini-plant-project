@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -6,9 +8,11 @@ import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 
 import 'package:mp_v1_0/controllers/logo/logo.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
-import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/button/button-oval.dart';
+import 'package:mp_v1_0/controllers/dialog/dialog-mini.dart';
+
+import 'package:http/http.dart' as http;
 
 class RegisterPage extends StatefulWidget {
   dynamic data;
@@ -31,23 +35,51 @@ class _RegisterPageState extends State<RegisterPage> {
 
   TextBox emailBox;
   TextBox passwordBox;
-  TextBox comfirmPasswordBox;
+  TextBox repasswordBox;
   TextBox nameBox;
-  TextBox phoneBox;
   TextBox addrBox;
+  TextBox phoneBox;
 
   Button registerBut;
   ButtonOval imgButOval;
 
+  DialogMini fetchDia;
+
   _RegisterPageState ({dynamic data}) {
     this.data = data;
     
-    this.emailBox = new TextBox(label: 'อีเมล', icon: Icon(Icons.mail));
-    this.passwordBox = new TextBox(label: 'รหัสผ่าน', obscure: true, icon: Icon(Icons.https));
-    this.comfirmPasswordBox = new TextBox(label: 'ยืนยันรหัสผ่าน', obscure: true, icon: Icon(Icons.https));
-    this.nameBox = new TextBox(label: 'ชื่อผู้ใช้', icon: Icon(Icons.person));
-    this.phoneBox = new TextBox(label: 'หมายเลขโทรศัพท์', icon: Icon(Icons.phone));
-    this.addrBox = new TextBox(label: 'ที่อยู่', icon: Icon(Icons.location_on));
+    this.emailBox = new TextBox(
+      label: 'อีเมล', 
+      icon: Icon(Icons.mail)
+    );
+    
+    this.passwordBox = new TextBox(
+      label: 'รหัสผ่าน', 
+      obscure: true, 
+      icon: Icon(Icons.https)
+    );
+
+    this.repasswordBox = new TextBox(
+      label: 'ยืนยันรหัสผ่าน', 
+      obscure: true, 
+      icon: Icon(Icons.https)
+    );
+    
+    this.nameBox = new TextBox(
+      label: 'ชื่อผู้ใช้', 
+      icon: Icon(Icons.person)
+    );
+
+    this.addrBox = new TextBox(
+      label: 'ที่อยู่', 
+      maxLines: 4,
+      icon: Icon(Icons.location_on)
+    );
+
+    this.phoneBox = new TextBox(
+      label: 'หมายเลขโทรศัพท์', 
+      icon: Icon(Icons.phone)
+    );
 
     this.imgButOval = new ButtonOval(
       title: 'เลือกรูปภาพ', 
@@ -64,19 +96,62 @@ class _RegisterPageState extends State<RegisterPage> {
       icon: Icons.border_color,
       title: 'สมัครสมาชิก',
       size: 'medium',
-      onTap: () async {
+      onTap: () {
         if (!this.registerBut.loading.isBegin) {
-          this.registerBut.loading.begin(then: () {
-            setState(() {
-              Future.delayed(const Duration(milliseconds: 2000), () {
-                //process
-                ClearPage(this.context, '/init');
-              });
+          this.registerBut.loading.begin(then: () async {
+            setState((){});
+
+            Map<String, dynamic> body = {
+              "cus_email": this.emailBox.controller.text,
+              "cus_name": this.nameBox.controller.text,
+              "cus_addr": this.addrBox.controller.text,
+              "cus_phone": this.phoneBox.controller.text,
+              "cus_imgURL": null,
+              "cus_password": this.passwordBox.controller.text,
+              "cus_repassword": this.repasswordBox.controller.text
+            };
+
+            dynamic response = await http.post(
+              Uri.http('mini-plant.comsciproject.com', '/user/register'),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(body),
+              encoding: Encoding.getByName('utf-8'),
+            );
+
+            dynamic result = jsonDecode(response.body);
+
+            this.registerBut.loading.end(then: () async {
+              setState(() {});
+
+              this.fetchDia.content = result['descript'];
+
+              if (result['status'] == 1) {
+                this.fetchDia.show(this.context, dismiss: false, actions: <DialogMiniItem> [
+                  DialogMiniItem(
+                    text: 'เสร็จสิ้น', 
+                    onPressed: () {
+                      Navigator.of(this.context, rootNavigator: true).pop();
+                      ClearPage(context, '/init');
+                    }
+                  )
+                ]);
+              } else {
+                this.fetchDia.show(this.context, actions: <DialogMiniItem> [
+                  DialogMiniItem(
+                    text: 'ลองอีกครั้ง', 
+                    onPressed: () {
+                      Navigator.of(this.context, rootNavigator: true).pop();
+                    }
+                  )
+                ]);
+              }
             });
           });
         }
       }
     );
+
+    this.fetchDia = new DialogMini(title: 'สมัครสมาชิก');
   }
 
   @override
@@ -111,12 +186,13 @@ class _RegisterPageState extends State<RegisterPage> {
             SizedBox(height: 30),
             this.emailBox.build(),
             this.nameBox.build(),
-            this.phoneBox.build(),
             this.addrBox.build(),
+            this.phoneBox.build(),
             this.passwordBox.build(),
-            this.comfirmPasswordBox.build(),
+            this.repasswordBox.build(),
             SizedBox(height: 15),
-            this.registerBut.build()
+            this.registerBut.build(),
+            SizedBox(height: 30),
           ],
         ),
       ),

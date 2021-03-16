@@ -4,13 +4,15 @@ import 'package:flutter/cupertino.dart';
 class TextBox {
   String label, hint;
   bool obscure;
+  int maxLines;
   Icon icon;
   TextEditingController controller;
 
-  TextBox ({String label='', String hint='', bool obscure=false, Icon icon}) {
+  TextBox ({String label='', String hint='', bool obscure=false, int maxLines=1, Icon icon}) {
     this.label = label;
     this.hint = hint;
     this.obscure = obscure;
+    this.maxLines = maxLines;
     this.icon = icon;
     this.controller = new TextEditingController();
   }
@@ -19,7 +21,9 @@ class TextBox {
     return Padding(
       padding: const EdgeInsets.only(left: 35, right: 35, top: 5, bottom: 5),
       child: TextField(
-        obscureText: this.obscure,
+        obscureText: (this.maxLines <= 1) ? this.obscure : false,
+        keyboardType: TextInputType.multiline,
+        maxLines: this.maxLines,
         decoration: InputDecoration (
           prefixIcon: this.icon,
           border: OutlineInputBorder(),

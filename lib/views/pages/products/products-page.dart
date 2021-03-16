@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 
 import 'package:mp_v1_0/controllers/product/product-bar.dart';
-import 'package:mp_v1_0/controllers/product/product-item.dart';
 import 'package:mp_v1_0/models/product-model/product-model.dart';
 
 class ProductsPage extends StatefulWidget {

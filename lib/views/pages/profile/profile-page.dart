@@ -92,25 +92,31 @@ class _ProfilePageState extends State<ProfilePage> {
 
     this.logoutDia = new DialogMini(
       title: 'ออกจากระบบ',
-      content: Text('คุณต้องการอยากจะออกจากระบบตอนนี้?'),
-      before: () {
-        //--
-      },
-      actions: <Widget> [
-        TextButton(
-          child: Text('ตกลง'),
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop();
-            ClearPage(this.context, '/init');
-          },
-        ),
-        TextButton(
-          child: Text('ยกเลิก'),
-          onPressed: () {
-            Navigator.of(context, rootNavigator: true).pop();
-          },
-        )
-      ]
+      content: 'คุณต้องการอยากจะออกจากระบบตอนนี้?',
+      actions: <DialogMiniItem> [
+        DialogMiniItem(text: 'ตกลง', onPressed: () {
+          Navigator.of(context, rootNavigator: true).pop();
+          ClearPage(this.context, '/init');
+        }),
+        DialogMiniItem(text: 'ยกเลิก', onPressed: () {
+          Navigator.of(context, rootNavigator: true).pop();
+        })
+      ],
+      // actions: <Widget> [
+      //   TextButton(
+      //     child: Text('ตกลง'),
+      //     onPressed: () {
+      //       Navigator.of(context, rootNavigator: true).pop();
+      //       ClearPage(this.context, '/init');
+      //     },
+      //   ),
+      //   TextButton(
+      //     child: Text('ยกเลิก'),
+      //     onPressed: () {
+      //       Navigator.of(context, rootNavigator: true).pop();
+      //     },
+      //   )
+      // ]
     );
   }
 

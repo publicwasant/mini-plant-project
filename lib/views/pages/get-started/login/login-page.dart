@@ -7,10 +7,13 @@ import 'package:mp_v1_0/models/shared-data/shared-data.dart';
 import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 
 import 'package:mp_v1_0/controllers/logo/logo.dart';
-import 'package:mp_v1_0/controllers/spin/spin.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/theme/theme.dart';
+import 'package:mp_v1_0/controllers/dialog/dialog-mini.dart';
+
+import 'package:http/http.dart' as http;
+
 
 class LoginPage extends StatefulWidget {
   dynamic data;
@@ -34,6 +37,8 @@ class _LoginPageState extends State<LoginPage> {
   TextBox passwordBox;
   Button loginButton;
 
+  DialogMini fetchDia;
+
   _LoginPageState ({dynamic data}) {
     this.data = data;
 
@@ -54,21 +59,51 @@ class _LoginPageState extends State<LoginPage> {
       size: 'medium', 
       colors: theme.button['loginColors'],
       onTap: () async {
-        Write('login', {
-          'email': this.emailBox.controller.text,
-          'password' : this.passwordBox.controller.text
-        });
-
         if (!this.loginButton.loading.isBegin) {
-          this.loginButton.loading.begin(then: () {
-            setState(() {
-              Future.delayed(const Duration(milliseconds: 2000), () {
+          this.loginButton.loading.begin(then: () async {
+            setState(() {});
+
+            Map<String, dynamic> body = {
+              'cus_email': this.emailBox.controller.text,
+              'cus_password': this.passwordBox.controller.text
+            };
+
+            dynamic response = await http.post(
+              Uri.http('mini-plant.comsciproject.com', '/user/login'),
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(body),
+              encoding: Encoding.getByName('utf-8')
+            );
+
+            dynamic result = jsonDecode(response.body);
+
+            this.loginButton.loading.end(then: () async {
+              setState(() {});
+
+              if (result['status'] == 1) {
                 ClearPage(this.context, '/home');
-              });
+              } else {
+                this.fetchDia.show(
+                  this.context, 
+                  content: result['descript']
+                );
+              }
             });
           });
         }
       }
+    );
+
+    this.fetchDia = new DialogMini(
+      title: 'เข้าสู่ระบบ',
+      actions: <DialogMiniItem> [
+        DialogMiniItem(
+          text: 'ลองอีกครั้ง',
+          onPressed: () {
+            Navigator.of(this.context, rootNavigator: true).pop();
+          }
+        )
+      ]
     );
 
   }
@@ -119,7 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                   )
                 )
               ],
-            )
+            ),
+            SizedBox(height: 30),
           ],
         ),
       ),
