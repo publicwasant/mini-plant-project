@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:mp_v1_0/models/shared-data/shared-data.dart';
+import 'package:mp_v1_0/controllers/shared-data/shared-data.dart';
 import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 
 import 'package:mp_v1_0/controllers/logo/logo.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/button/button-oval.dart';
-import 'package:mp_v1_0/controllers/dialog/dialog-mini.dart';
+import 'package:mp_v1_0/controllers/dialog-box/dialog-box.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -43,7 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Button registerBut;
   ButtonOval imgButOval;
 
-  DialogMini fetchDia;
+  DialogBox fetchDia;
 
   _RegisterPageState ({dynamic data}) {
     this.data = data;
@@ -66,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
     
     this.nameBox = new TextBox(
-      label: 'ชื่อผู้ใช้', 
+      label: 'ชื่อ-นามสกุล', 
       icon: Icon(Icons.person)
     );
 
@@ -82,10 +82,9 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     this.imgButOval = new ButtonOval(
-      title: 'เลือกรูปภาพ', 
       size: 'large',
-      border: 4.0,
-      imgURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKP1kH94VI_awzgsQuckJC5tnHNib7RtKpVg&usqp=CAU',
+      border: 2.0,
+      icon: Icons.photo_camera,
       imgVisitExcept: true,
       onTap: () {
         //work
@@ -106,7 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
               "cus_name": this.nameBox.controller.text,
               "cus_addr": this.addrBox.controller.text,
               "cus_phone": this.phoneBox.controller.text,
-              "cus_imgURL": null,
+              "cus_imgURL": 'https://cdn.iconscout.com/icon/premium/png-256-thumb/plant-1733838-1475787.png',
               "cus_password": this.passwordBox.controller.text,
               "cus_repassword": this.repasswordBox.controller.text
             };
@@ -126,8 +125,8 @@ class _RegisterPageState extends State<RegisterPage> {
               this.fetchDia.content = result['descript'];
 
               if (result['status'] == 1) {
-                this.fetchDia.show(this.context, dismiss: false, actions: <DialogMiniItem> [
-                  DialogMiniItem(
+                this.fetchDia.show(this.context, dismiss: false, actions: <DialogBoxItem> [
+                  DialogBoxItem(
                     text: 'เสร็จสิ้น', 
                     onPressed: () {
                       Navigator.of(this.context, rootNavigator: true).pop();
@@ -136,8 +135,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   )
                 ]);
               } else {
-                this.fetchDia.show(this.context, actions: <DialogMiniItem> [
-                  DialogMiniItem(
+                this.fetchDia.show(this.context, actions: <DialogBoxItem> [
+                  DialogBoxItem(
                     text: 'ลองอีกครั้ง', 
                     onPressed: () {
                       Navigator.of(this.context, rootNavigator: true).pop();
@@ -151,7 +150,7 @@ class _RegisterPageState extends State<RegisterPage> {
       }
     );
 
-    this.fetchDia = new DialogMini(title: 'สมัครสมาชิก');
+    this.fetchDia = new DialogBox(title: 'สมัครสมาชิก');
   }
 
   @override
@@ -183,13 +182,20 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             SizedBox(height: 30),
             this.imgButOval.build(),
-            SizedBox(height: 30),
-            this.emailBox.build(),
-            this.nameBox.build(),
-            this.addrBox.build(),
-            this.phoneBox.build(),
-            this.passwordBox.build(),
-            this.repasswordBox.build(),
+            SizedBox(height: 15),
+            Container(
+              padding: EdgeInsets.only(right: 35, left: 35),
+              child: Column(
+                children: <Widget> [
+                  this.emailBox.build(),
+                  this.nameBox.build(),
+                  this.addrBox.build(),
+                  this.phoneBox.build(),
+                  this.passwordBox.build(),
+                  this.repasswordBox.build(),
+                ],
+              ),
+            ),
             SizedBox(height: 15),
             this.registerBut.build(),
             SizedBox(height: 30),

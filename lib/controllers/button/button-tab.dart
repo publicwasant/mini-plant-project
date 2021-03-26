@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/controllers/theme/theme.dart';
-import 'package:mp_v1_0/controllers/spin/spin.dart';
+import 'package:mp_v1_0/controllers/loader/loader.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 
 class ButtonTab extends Button {
@@ -28,7 +28,7 @@ class ButtonTab extends Button {
     this.colors = (colors != null) ? colors : theme.buttonTab['defaultColors'];
     this.imgURL = imgURL;
     this.imgVisitExcept = imgVisitExcept;
-    this.loading = new Spin(color: this.colors['font']);
+    this.loading = new Loader(color: this.colors['font']);
     this.then = onTap;
   }
 }

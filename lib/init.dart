@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/views/pages/get-started/get-started-page.dart';
-import 'package:mp_v1_0/views/pages/home/home-page.dart';
-import 'package:mp_v1_0/views/pages/products/products-detail-page.dart';
 
 class InitApp extends StatefulWidget {
   dynamic data;

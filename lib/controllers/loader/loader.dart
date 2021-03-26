@@ -7,12 +7,12 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
  * sources: https://pub.dev/packages/flutter_spinkit
  */
 
-class Spin {
+class Loader {
   bool isBegin;
   Map<String, Widget> options;
-  Widget spin;
+  Widget builder;
 
-  Spin ({bool begin=false, Color color}) {
+  Loader ({bool begin=false, Color color}) {
     this.isBegin = begin;
     this.options = {
       'begin' : Container(
@@ -29,12 +29,16 @@ class Spin {
       )
     };
 
-    this.spin = (this.isBegin) ? this.options['begin'] : this.options['end'];
+    this.builder = (this.isBegin) ? this.options['begin'] : this.options['end'];
+  }
+
+  Widget build () {
+    return this.builder;
   }
 
   Function begin ({Function then}) {
     this.isBegin = true;
-    this.spin = this.options['begin'];
+    this.builder = this.options['begin'];
 
     if (then != null) {
       then();
@@ -43,7 +47,7 @@ class Spin {
 
   Function end ({Function then}) {
     this.isBegin = false;
-    this.spin = this.options['end'];
+    this.builder = this.options['end'];
     
     if (then != null) {
       then();

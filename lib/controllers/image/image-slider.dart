@@ -6,7 +6,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
-import 'package:mp_v1_0/controllers/image/image-mini.dart';
+import 'package:mp_v1_0/controllers/image/image-box.dart';
 
 /*
  * sources: https://pub.dev/packages/carousel_slider

@@ -1,20 +1,28 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'package:mp_v1_0/controllers/shared-data/shared-data.dart';
+import 'package:mp_v1_0/controllers/redirect/redirect.dart';
+import 'package:mp_v1_0/controllers/fetch/fetch.dart';
 
 import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/button/button-oval.dart';
-import 'package:mp_v1_0/controllers/dialog/dialog-mini.dart';
-import 'package:mp_v1_0/controllers/redirect/redirect.dart';
+import 'package:mp_v1_0/controllers/dialog-box/dialog-box.dart';
+import 'package:mp_v1_0/controllers/loader/loader.dart';
+
+import 'package:mp_v1_0/models/employee/employee-model.dart';
+import 'package:mp_v1_0/models/customer/customer-model.dart';
 
 Color BackgroundColor = Colors.grey[100];
 Color FontColor = Colors.grey[800];
 Color PriceColor = Colors.lightBlue[800];
 
 double FontTitleSize = 24;
+double FontSubTitleSize = 20;
 double FontDetailSize = 12;
-double FontStatusSize = 18;
-double FontPriceSize = 18;
 
 class ProfilePage extends StatefulWidget {
   dynamic data;
@@ -37,35 +45,30 @@ class _ProfilePageState extends State<ProfilePage> {
   Button editBut;
   Button logoutBut;
 
-  DialogMini logoutDia;
+  DialogBox logoutDia;
+
+  Loader loading;
+
+  EmployeeModel employeeModel;
+  CustomerModel customerModel;
+  dynamic userModel;
+
+  dynamic user;
 
   _ProfilePageState ({dynamic data}) {
     this.data = data;
     
     this.imgBut = new ButtonOval(
       size: 'large',
-      border: 4.0,
-      imgURL: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Shayh_Muhammad_Sodiq.jpg',
+      border: 2.0,
       imgVisitExcept: true,
       onTap: () async {
-        if (!this.imgBut.loading.isBegin) {
-          this.imgBut.loading.begin(then: () {
-            setState(() {
-              Future.delayed(const Duration(milliseconds: 2000), () {
-                ScaffoldMessenger.of(this.context).showSnackBar(
-                  SnackBar(
-                    content: Text('เปลี่ยนรูปโปรไฟล์แล้ว'),
-                    backgroundColor: Colors.green,
-                  )
-                );
-
-                this.imgBut.loading.end(then: () {
-                  setState(() {});
-                });
-              });
-            });
-          });
-        }
+        ScaffoldMessenger.of(this.context).showSnackBar(
+          SnackBar(
+            content: Text('เปลี่ยนรูปโปรไฟล์แล้ว'),
+            backgroundColor: Colors.green,
+          )
+        );
      }
     );
 
@@ -76,6 +79,7 @@ class _ProfilePageState extends State<ProfilePage> {
       border: 1.0,
       colors: theme.button['editColors'],
       onTap: () {
+        Redirect(this.context, '/profile/edit');
       }
     );
 
@@ -90,34 +94,58 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     );
 
-    this.logoutDia = new DialogMini(
+    this.logoutDia = new DialogBox(
       title: 'ออกจากระบบ',
       content: 'คุณต้องการอยากจะออกจากระบบตอนนี้?',
-      actions: <DialogMiniItem> [
-        DialogMiniItem(text: 'ตกลง', onPressed: () {
+      actions: <DialogBoxItem> [
+        DialogBoxItem(text: 'ตกลง', onPressed: () {
           Navigator.of(context, rootNavigator: true).pop();
           ClearPage(this.context, '/init');
         }),
-        DialogMiniItem(text: 'ยกเลิก', onPressed: () {
+        DialogBoxItem(text: 'ยกเลิก', onPressed: () {
           Navigator.of(context, rootNavigator: true).pop();
         })
       ],
-      // actions: <Widget> [
-      //   TextButton(
-      //     child: Text('ตกลง'),
-      //     onPressed: () {
-      //       Navigator.of(context, rootNavigator: true).pop();
-      //       ClearPage(this.context, '/init');
-      //     },
-      //   ),
-      //   TextButton(
-      //     child: Text('ยกเลิก'),
-      //     onPressed: () {
-      //       Navigator.of(context, rootNavigator: true).pop();
-      //     },
-      //   )
-      // ]
     );
+
+    this.loading = new Loader(begin: true);
+    this.customerModel = new CustomerModel();
+
+    Read('user', then: (dynamic values) {
+      this.user = values;
+
+      print(this.user);
+
+      if (this.user['user_status'] == 0) { // admin
+        Get('http://mini-plant.comsciproject.com/user/employee?id=' + this.user['id'].toString(), then: (dynamic response) {
+            Map<String, dynamic> result = jsonDecode(response.body);
+
+            if (result['status'] == 1) {
+              this.loading.end(then: () {
+                this.employeeModel = EmployeeModel(fromMap: result['data'][0]);
+                this.userModel = this.employeeModel;
+
+                this.imgBut.imgURL = this.employeeModel.imgURL;
+                setState(() {});
+              });
+            }
+          });
+      } else if (this.user['user_status'] == 1) { // customer
+        Get('http://mini-plant.comsciproject.com/user/customer?id=' + this.user['id'].toString(), then: (dynamic response) {
+          Map<String, dynamic> result = jsonDecode(response.body);
+
+          if (result['status'] == 1) {
+            this.loading.end(then: () {
+              this.customerModel = CustomerModel(fromMap: result['data'][0]);
+              this.userModel = this.customerModel;
+
+              this.imgBut.imgURL = this.customerModel.imgURL;
+              setState(() {});
+            });
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -129,8 +157,8 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         title: Text('โปรไฟล์')
       ),
-      body: Container(
-        child: ListView(
+      body: (!this.loading.isBegin) ? SingleChildScrollView(
+        child: Column(
           children: <Widget> [
             Container(
               color: Colors.grey.withOpacity(0.16),
@@ -144,15 +172,17 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: Column(
                           children: <Widget> [
                             this.imgBut.build(),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: Center(
-                                child: Text(
-                                  'มูฮัมหมัด อาลี',
-                                  style: TextStyle(fontSize: FontTitleSize),
-                                ),
+                            SizedBox(height: 20),
+                            Text(
+                              this.userModel.name,
+                              style: TextStyle(fontSize: FontTitleSize),
+                            ),
+                            (this.user['user_status'] == 0) ? (
+                              Text(
+                                this.userModel.username + ' (Admin)',
+                                style: TextStyle(fontSize: FontSubTitleSize),
                               )
-                            )
+                            ) : Container()
                           ],
                         )
                       )
@@ -177,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 leading: Icon(Icons.location_on),
                                 title: const Text('ที่อยู่'),
                                 subtitle: Text(
-                                  '7/22 หมู่ 5 ซอยท่าเอียด (เจ้าฟ้า 50) ถนนเจ้าฟ้าตะวันตก ตำบอลฉลอง อำเภอเมือง จังหวัดภูเก็ต 83000',
+                                  this.userModel.addr,
                                   style: TextStyle(
                                     fontSize: FontDetailSize,
                                     color: FontColor
@@ -188,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 leading: Icon(Icons.mail),
                                 title: const Text('อีเมล'),
                                 subtitle: Text(
-                                  'makeup.apple45@gmail.com',
+                                  this.userModel.email,
                                   style: TextStyle(
                                     fontSize: FontDetailSize,
                                     color: FontColor
@@ -199,7 +229,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 leading: Icon(Icons.phone),
                                 title: const Text('หมายเลขโทรศัพท์'),
                                 subtitle: Text(
-                                  '096-654-4432',
+                                  this.userModel.phone,
                                   style: TextStyle(
                                     fontSize: FontDetailSize,
                                     color: FontColor
@@ -225,6 +255,8 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ],
         ),
+      ) : Center(
+        child: this.loading.build(),
       ),
     );
   }

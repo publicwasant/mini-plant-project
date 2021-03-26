@@ -76,7 +76,7 @@ class Theme {
       'very-large': [200.0, 200.0, 18.0]
     },
     'defaultColors': {
-      'background': Colors.white,
+      'background': Colors.grey[100],
       'font': Colors.grey[800],
       'border': Colors.grey[300]
     }

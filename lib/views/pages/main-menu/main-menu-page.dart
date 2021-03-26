@@ -1,9 +1,28 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:mp_v1_0/controllers/side-menu/side-menu.dart';
+import 'package:mp_v1_0/controllers/shared-data/shared-data.dart';
 import 'package:mp_v1_0/controllers/redirect/redirect.dart';
-import 'package:mp_v1_0/controllers/button/button-oval.dart';
+import 'package:mp_v1_0/controllers/fetch/fetch.dart';
+
+import 'package:mp_v1_0/controllers/menu/menu-side.dart';
+import 'package:mp_v1_0/controllers/button/button-pasteboard.dart';
+import 'package:mp_v1_0/controllers/loader/loader.dart';
+
+import 'package:mp_v1_0/models/employee/employee-model.dart';
+import 'package:mp_v1_0/models/customer/customer-model.dart';
+
+Color BackgroundColor = Colors.grey[100];
+Color FontColor = Colors.grey[800];
+Color PriceColor = Colors.lightBlue[800];
+
+double FontTitlePageSize = 28;
+double FontTitleSize = 18;
+double FontDetailSize = 12;
+double FontStatusSize = 18;
+double FontPriceSize = 18;
 
 class MainMenuPage extends StatefulWidget {
   dynamic data;
@@ -21,9 +40,13 @@ class MainMenuPage extends StatefulWidget {
 class _MainMenuPageState extends State<MainMenuPage> {
   dynamic data;
   BuildContext context;
-  SideMenu profileSideMenu;
 
-  ButtonOval imgBut;
+  SideMenu profileSideMenu;
+  ButtonProfile profileBut;
+  Loader loading;
+
+  EmployeeModel employeeModel;
+  CustomerModel customerModel;
 
   _MainMenuPageState ({dynamic data}) {
     this.data = data;
@@ -39,14 +62,58 @@ class _MainMenuPageState extends State<MainMenuPage> {
       }
     );
 
-    this.imgBut = new ButtonOval(
-      size: 'small',
-      border: 2.0,
-      imgURL: 'https://upload.wikimedia.org/wikipedia/commons/1/1b/Shayh_Muhammad_Sodiq.jpg',
-      imgVisitExcept: true,
-      onTap: () {
-     }
-    );
+    this.loading = new Loader(begin: true);
+    this.profileBut = new ButtonProfile();
+
+    Read('user', then: (dynamic values) {
+      int status = values['user_status'];
+      int id = values['id'];
+
+      if (status == 0) {
+        Get('http://mini-plant.comsciproject.com/user/employee?id=$id', then: (dynamic response) {
+          Map<String, dynamic> result = jsonDecode(response.body);
+
+          if (result['status'] == 1) {
+            this.loading.end(then: () {
+              this.employeeModel = EmployeeModel(fromMap: result['data'][0]);
+              
+              this.profileBut.imgURL = this.employeeModel.imgURL;
+              this.profileBut.title = this.employeeModel.name;
+              this.profileBut.subTitles = [
+                'ชื่อผู้ใช้: ' + this.employeeModel.username + ' (Admin)',
+                'อีเมล' + this.employeeModel.email
+              ];
+
+              this.profileBut.onTap(() {
+                Redirect(this.context, '/profile');
+              });
+
+              setState(() {});
+            });
+          }
+        });
+      } else if (status == 1) {
+        Get('http://mini-plant.comsciproject.com/user/customer?id=$id', then: (dynamic response) {
+          Map<String, dynamic> result = jsonDecode(response.body);
+
+          if (result['status'] == 1) {
+            this.loading.end(then: () {
+              this.customerModel = CustomerModel(fromMap: result['data'][0]);
+
+              this.profileBut.imgURL = this.customerModel.imgURL;
+              this.profileBut.title = this.customerModel.name;
+              this.profileBut.subTitles = ['อีเมล: ' + this.customerModel.email];
+
+              this.profileBut.onTap(() {
+                Redirect(this.context, '/profile');
+              });
+
+              setState(() {});
+            });
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -54,50 +121,21 @@ class _MainMenuPageState extends State<MainMenuPage> {
     this.context = context;
 
     return Scaffold(
+      backgroundColor: BackgroundColor,
       endDrawer: this.profileSideMenu.biuld(),
       appBar: AppBar(
         title: Text('เมนู'),
       ),
-      body: Container(
-        child: ListView(
-          children: <Widget> [
-            Card(
-              color: Colors.grey[300],
-              child: InkWell(
-                onTap: () {
-                  Redirect(context, '/profile');
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(5),
-                  child: Stack(
-                    children: <Widget> [
-                      Positioned(
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget> [
-                              this.imgBut.build(),
-                              SizedBox(width: 15),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget> [
-                                  Text('มูฮัมหมัด อาลี', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                  Text('makeup.apple45@gmail.com'),
-                                  Text('')
-                                ]
-                              )
-                            ],
-                          )
-                        ),
-                      )
-                    ],
-                  )
-                )
-              )
-            ),
-          ],
+      body: (!this.loading.isBegin) ? SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: <Widget> [
+              this.profileBut.build()
+            ],
+          ),
         ),
+      ) : Center(
+        child: this.loading.build()
       ),
     );
   }

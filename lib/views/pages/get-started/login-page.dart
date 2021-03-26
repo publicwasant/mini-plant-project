@@ -3,16 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:mp_v1_0/models/shared-data/shared-data.dart';
+import 'package:mp_v1_0/controllers/shared-data/shared-data.dart';
 import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 
 import 'package:mp_v1_0/controllers/logo/logo.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/theme/theme.dart';
-import 'package:mp_v1_0/controllers/dialog/dialog-mini.dart';
-
-import 'package:http/http.dart' as http;
+import 'package:mp_v1_0/controllers/dialog-box/dialog-box.dart';
+import 'package:mp_v1_0/controllers/fetch/fetch.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -33,17 +32,17 @@ class _LoginPageState extends State<LoginPage> {
   BuildContext context;
 
   Logo logo;
-  TextBox emailBox;
+  TextBox usernameBox;
   TextBox passwordBox;
   Button loginButton;
 
-  DialogMini fetchDia;
+  DialogBox fetchDia;
 
   _LoginPageState ({dynamic data}) {
     this.data = data;
 
-    this.emailBox = new TextBox(
-      label:'อีเมล', 
+    this.usernameBox = new TextBox(
+      label:'ชื่อผู้ใช้/อีเมล', 
       icon: Icon(Icons.mail)
     );
 
@@ -63,41 +62,43 @@ class _LoginPageState extends State<LoginPage> {
           this.loginButton.loading.begin(then: () async {
             setState(() {});
 
-            Map<String, dynamic> body = {
-              'cus_email': this.emailBox.controller.text,
-              'cus_password': this.passwordBox.controller.text
-            };
+            Post('http://mini-plant.comsciproject.com/user/login', {
+              'username': this.usernameBox.controller.text,
+              'password': this.passwordBox.controller.text
+            }, then: (dynamic response) {
 
-            dynamic response = await http.post(
-              Uri.http('mini-plant.comsciproject.com', '/user/login'),
-              headers: {'Content-Type': 'application/json'},
-              body: jsonEncode(body),
-              encoding: Encoding.getByName('utf-8')
-            );
+              Map<String, dynamic> result = jsonDecode(response.body);
 
-            dynamic result = jsonDecode(response.body);
+              this.loginButton.loading.end(then: () {
+                setState(() {});
 
-            this.loginButton.loading.end(then: () async {
-              setState(() {});
-
-              if (result['status'] == 1) {
-                ClearPage(this.context, '/home');
-              } else {
-                this.fetchDia.show(
-                  this.context, 
-                  content: result['descript']
-                );
-              }
+                if (result['status'] == 1) {
+                  Write('user', result['data'], then: () {
+                    ClearPage(this.context, '/home', data: {
+                      'user': result['data']
+                    });
+                  });
+                } else {
+                  this.fetchDia.show(
+                    this.context, 
+                    content: result['descript']
+                  );
+                }
+              });
             });
+          });
+        } else {
+          this.loginButton.loading.end(then: () {
+            setState(() {});
           });
         }
       }
     );
 
-    this.fetchDia = new DialogMini(
+    this.fetchDia = new DialogBox(
       title: 'เข้าสู่ระบบ',
-      actions: <DialogMiniItem> [
-        DialogMiniItem(
+      actions: <DialogBoxItem> [
+        DialogBoxItem(
           text: 'ลองอีกครั้ง',
           onPressed: () {
             Navigator.of(this.context, rootNavigator: true).pop();
@@ -106,6 +107,9 @@ class _LoginPageState extends State<LoginPage> {
       ]
     );
 
+    // this.usernameBox.controller.text = 'test@gmail.com';
+    this.usernameBox.controller.text = 'test';
+    this.passwordBox.controller.text = 'test';
   }
 
   @override
@@ -136,8 +140,15 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
             SizedBox(height: MediaQuery.of(context).size.height*0.24),
-            this.emailBox.build(),
-            this.passwordBox.build(),
+            Container(
+              padding: EdgeInsets.only(right: 35, left: 35),
+              child: Column(
+                children: <Widget> [
+                  this.usernameBox.build(),
+                  this.passwordBox.build(),
+                ],
+              ),
+            ),
             SizedBox(height: 15),
             this.loginButton.build(),
             Row(

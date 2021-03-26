@@ -21,24 +21,37 @@ class CustomPage extends StatefulWidget {
 
 class _CustomPageState extends State<CustomPage> {
   dynamic data;
-  dynamic user;
-  dynamic page;
   
   _CustomPageState ({dynamic data}) {
     this.data = data;
-
-    if (data['user']['user_status'] == 0) {
-      this.page = Toggle('/custom/employee', data: data);
-    } else if (data['user']['user_status'] == 1) {
-      this.page = Toggle('/custom/customer', data: data);
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: BackgroundColor,
-      body: this.page
+      body: DefaultTabController(
+        length: 3,
+        child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              tabs: [
+                Tab(icon: Icon(Icons.directions_car)),
+                Tab(icon: Icon(Icons.directions_transit)),
+                Tab(icon: Icon(Icons.directions_bike)),
+              ],
+            ),
+            title: Text('Tabs Demo'),
+          ),
+          body: TabBarView(
+            children: [
+              Icon(Icons.directions_car),
+              Icon(Icons.directions_transit),
+              Icon(Icons.directions_bike),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

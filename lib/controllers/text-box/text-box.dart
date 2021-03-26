@@ -19,7 +19,7 @@ class TextBox {
 
   Widget build () {
     return Padding(
-      padding: const EdgeInsets.only(left: 35, right: 35, top: 5, bottom: 5),
+      padding: const EdgeInsets.only(top: 5, bottom: 5),
       child: TextField(
         obscureText: (this.maxLines <= 1) ? this.obscure : false,
         keyboardType: TextInputType.multiline,

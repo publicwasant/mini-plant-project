@@ -5,7 +5,7 @@ import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/logo/logo.dart';
-import 'package:mp_v1_0/controllers/spin/spin.dart';
+import 'package:mp_v1_0/controllers/loader/loader.dart';
 
 class GetStartedPage extends StatefulWidget {
   dynamic data;
@@ -24,7 +24,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
   dynamic data;
   BuildContext context;
 
-  Spin loadingSpin;
+  Loader loadingSpin;
   Logo logo;
 
   Button loginBut;
@@ -35,7 +35,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
   _GetStartedPageState ({dynamic data}) {
     this.data = data;
 
-    this.loadingSpin = new Spin();
+    this.loadingSpin = new Loader();
     this.logo = Logo();
 
     this.loginBut = new Button(

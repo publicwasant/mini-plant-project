@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:mp_v1_0/models/product-model/product-model.dart';
+import 'package:mp_v1_0/models/product/product-model.dart';
 import 'package:mp_v1_0/controllers/image/image-slider.dart';
 import 'package:mp_v1_0/controllers/theme/theme.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';

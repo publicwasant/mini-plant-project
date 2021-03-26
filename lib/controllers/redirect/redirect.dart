@@ -4,16 +4,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:mp_v1_0/init.dart';
 import 'package:mp_v1_0/views/pages/basket/basket-page.dart';
 import 'package:mp_v1_0/views/pages/custom/custom-page.dart';
+import 'package:mp_v1_0/views/pages/custom/custom-employee-page.dart';
+import 'package:mp_v1_0/views/pages/custom/custom-customer-page.dart';
+
 import 'package:mp_v1_0/views/pages/get-started/get-started-page.dart';
-import 'package:mp_v1_0/views/pages/get-started/login/login-page.dart';
-import 'package:mp_v1_0/views/pages/get-started/logout/logout-page.dart';
-import 'package:mp_v1_0/views/pages/get-started/register/register-page.dart';
+import 'package:mp_v1_0/views/pages/get-started/login-page.dart';
+import 'package:mp_v1_0/views/pages/get-started/register-page.dart';
+
 import 'package:mp_v1_0/views/pages/history/history-page.dart';
 import 'package:mp_v1_0/views/pages/home/home-page.dart';
 import 'package:mp_v1_0/views/pages/main-menu/main-menu-page.dart';
-import 'package:mp_v1_0/views/pages/products/products-page.dart';
-import 'package:mp_v1_0/views/pages/products/products-detail-page.dart';
+
+import 'package:mp_v1_0/views/pages/product/product.dart';
+import 'package:mp_v1_0/views/pages/product/product-detail.dart';
+// import 'package:mp_v1_0/views/pages/product/product-add.dart';
+
 import 'package:mp_v1_0/views/pages/profile/profile-page.dart';
+import 'package:mp_v1_0/views/pages/profile/profile-edit-page.dart';
 import 'package:mp_v1_0/views/pages/settings/settings-page.dart';
 import 'package:mp_v1_0/views/pages/shop/shop-page.dart';
 
@@ -24,9 +31,10 @@ Map<String, dynamic> Routes ({dynamic data}) {
     '/init' : InitApp(data: data),
     '/basket' : BasketPage(data: data),
     '/custom' : CustomPage(data: data),
+    '/custom/employee' : CustomEmployeePage(data: data),
+    '/custom/customer' : CustomCustomerPage(data: data),
     '/get-started' : GetStartedPage(data: data),
     '/get-started/login' : LoginPage(data: data),
-    '/get-started/logout' : LogoutPage(data: data),
     '/get-started/register' : RegisterPage(data: data),
     '/history' : HistoryPage(data: data),
     '/home' : HomePage(data: data),
@@ -34,16 +42,21 @@ Map<String, dynamic> Routes ({dynamic data}) {
     '/products' : ProductsPage(data: data),
     '/products/detail' : ProductsDetailPage(data: data),
     '/profile' : ProfilePage(data: data),
+    '/profile/edit' : ProfileEditPage(data: data),
     '/settings' : SettingsPage(data: data),
     '/shop' : ShopPage(data: data)
   };
 }
 
-Function Back (BuildContext context) {
+Function Back (BuildContext context, {Function then}) {
   Navigator.pop(context);
+
+  if (then != null) {
+    then();
+  }
 }
 
-Function Replace (BuildContext context, dynamic material) {
+Function Replace (BuildContext context, dynamic material, {Function then}) {
   if (material != null) {
     Navigator.pushReplacement(
       context, 
@@ -51,16 +64,20 @@ Function Replace (BuildContext context, dynamic material) {
         builder: (BuildContext context) => material
       )
     );
+
+    if (then != null) {
+      then();
+    }
   } else {
     print('[ERROR] Redirect not found: ' + material.toString());
   }
 }
 
-Function Redirect (BuildContext context, String page, {Function before, dynamic data}) {
+Function Redirect (BuildContext context, String page, {Function then, dynamic data}) {
   dynamic target = Routes(data: data)[page];
 
-  if (before != null) {
-    before();
+  if (then != null) {
+    then();
   }
 
   if (target != null) {
@@ -75,11 +92,11 @@ Function Redirect (BuildContext context, String page, {Function before, dynamic 
   }
 }
 
-Function ClearPage (BuildContext context, String page, {Function before, dynamic data}) {
+Function ClearPage (BuildContext context, String page, {Function then, dynamic data}) {
   dynamic target = Routes(data: data)[page];
 
-  if (before != null) {
-    before();
+  if (then != null) {
+    then();
   }
 
   if (target != null) {
@@ -95,11 +112,11 @@ Function ClearPage (BuildContext context, String page, {Function before, dynamic
   }
 }
 
-Widget Toggle (String page, {Function before, dynamic data}) {
+Widget Toggle (String page, {Function then, dynamic data}) {
   dynamic target = Routes(data: data)[page];
 
-  if (before != null) {
-    before();
+  if (then != null) {
+    then();
   }
 
   return (target != null) ? target : SizedBox();

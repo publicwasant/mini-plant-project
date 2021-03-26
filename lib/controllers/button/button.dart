@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/controllers/theme/theme.dart';
-import 'package:mp_v1_0/controllers/spin/spin.dart';
-import 'package:mp_v1_0/controllers/image/image-mini.dart';
+import 'package:mp_v1_0/controllers/loader/loader.dart';
+import 'package:mp_v1_0/controllers/image/image-box.dart';
 
 class Button {
   IconData icon;
@@ -14,7 +14,7 @@ class Button {
   String imgURL;
   bool imgVisitExcept;
   double border;
-  Spin loading;
+  Loader loading;
 
   Function then;
 
@@ -38,7 +38,7 @@ class Button {
     this.colors = (colors != null) ? colors : theme.button['defaultColors'];
     this.imgURL = imgURL;
     this.imgVisitExcept = imgVisitExcept;
-    this.loading = new Spin(color: this.colors['font']);
+    this.loading = new Loader(color: this.colors['font']);
     this.then = onTap;
   }
 
@@ -123,7 +123,7 @@ class Button {
                             ]
                           )
                         ) : (
-                          this.loading.spin
+                          this.loading.build()
                         ),
                       ),
                       onPressed: () {

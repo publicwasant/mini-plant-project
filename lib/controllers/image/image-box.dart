@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:mp_v1_0/controllers/spin/spin.dart';
+import 'package:mp_v1_0/controllers/loader/loader.dart';
 
 class ImageMini {
   String url;

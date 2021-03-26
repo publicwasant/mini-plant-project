@@ -1,16 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:mp_v1_0/models/shared-data/shared-data.dart';
-import 'package:mp_v1_0/controllers/redirect/redirect.dart';
-
 import 'package:mp_v1_0/controllers/menu/menu.dart';
 
-import 'package:mp_v1_0/views/pages/products/products-page.dart';
+import 'package:mp_v1_0/views/pages/product/product.dart';
 import 'package:mp_v1_0/views/pages/history/history-page.dart';
 import 'package:mp_v1_0/views/pages/custom/custom-page.dart';
 import 'package:mp_v1_0/views/pages/basket/basket-page.dart';
 import 'package:mp_v1_0/views/pages/main-menu/main-menu-page.dart';
+
 
 class HomePage extends StatefulWidget {
   dynamic data;
@@ -47,19 +47,15 @@ class _HomePageState extends State<HomePage> {
     ], current: this.current);
 
     this.pages = [
-      ProductsPage(data: {}), 
-      HistoryPage(data: {}),
-      CustomPage(data: {}), 
-      BasketPage(data: {}),
-      MainMenuPage(data: {})
+      ProductsPage(data: data), 
+      HistoryPage(data: data),
+      CustomPage(data: data), 
+      BasketPage(data: data),
+      MainMenuPage(data: data)
     ];
 
     this.menu.onTap(() {
       setState(() {});
-    });
-
-    Read('login', then: (dynamic value) {
-      print(value);
     });
   }
 
