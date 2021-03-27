@@ -148,7 +148,7 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
             Container(
               padding: const EdgeInsets.all(15),
               child: Text(
-                this.productModel.title,
+                this.productModel.name,
                 style: TextStyle(
                   fontSize: FontTitleSize,
                   color: FontColor

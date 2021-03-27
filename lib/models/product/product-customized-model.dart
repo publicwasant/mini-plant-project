@@ -9,7 +9,7 @@ class CustomizedProductModel extends ProductModel {
   double totalPrice;
 
   CustomizedProductModel ({
-      int id=-1, String title='', String detail='', String type='', int total=-1, List<String> size, String status='', double discount=1.0, List<String> imgsURL,
+      int id=-1, String title='', String detail='', String type='', List<String> size, String status='', double discount=1.0, List<String> imgsURL,
       ProductModel plant, ProductModel marble, ProductModel pot, ProductModel card,
     }) {
 
@@ -19,10 +19,9 @@ class CustomizedProductModel extends ProductModel {
     this.card = card;
 
     this.id = id;
-    this.title = title;
+    this.name = title;
     this.detail = detail;
     this.type = type;
-    this.total = total;
     this.size = (size != null) ? size : [];
     this.status = status;
     this.price = this.priceCalculated();

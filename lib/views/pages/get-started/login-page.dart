@@ -69,6 +69,9 @@ class _LoginPageState extends State<LoginPage> {
 
               Map<String, dynamic> result = jsonDecode(response.body);
 
+              print(result);
+
+
               this.loginButton.loading.end(then: () {
                 setState(() {});
 
@@ -81,10 +84,12 @@ class _LoginPageState extends State<LoginPage> {
                 } else {
                   this.fetchDia.show(
                     this.context, 
-                    content: result['descript']
+                    content: <Widget> [Text(result['descript'])]
                   );
                 }
               });
+            }, error: (dynamic e) {
+              print(e);
             });
           });
         } else {

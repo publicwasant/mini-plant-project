@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -8,11 +10,13 @@ import 'package:mp_v1_0/controllers/button/button-tab.dart';
 import 'package:mp_v1_0/controllers/button/button-tile.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
 import 'package:mp_v1_0/controllers/dialog-box/dialog-box.dart';
-// import 'package:mp_v1_0/controllers/dialog-box/dialog-input.dart';
 import 'package:mp_v1_0/controllers/image/image-slider.dart';
 import 'package:mp_v1_0/controllers/image/image-gallery.dart';
 
 import 'package:mp_v1_0/controllers/dropdawn-box/dropdawn-box.dart';
+
+import 'package:mp_v1_0/controllers/fetch/fetch.dart';
+import 'package:mp_v1_0/models/product/product-model.dart';
 
 Color AppBarBackgroundColor = Colors.deepPurpleAccent;
 Color BackgroundColor = Colors.grey[100];
@@ -95,8 +99,11 @@ class _ProductTabState extends State<_ProductTab> {
   List<String> imgsURL;
   ImageGallery imgsGal;
 
+  DropdawnBox typeDbox;
   TextBox nameBox;
   TextBox detailBox;
+  DropdawnBox sizeDbox;
+  DropdawnBox statusDbox;
   TextBox totalPriceBox;
 
   ButtonTile typeButTile;
@@ -107,8 +114,10 @@ class _ProductTabState extends State<_ProductTab> {
   ButtonTile totalPriceButTile;
 
   ButtonTab saveBut;
-
+  DialogBox diaFetch;
   DialogBox diaInput;
+
+  ProductModel productModel;
   
   _ProductTabState ({dynamic data}) {
     this.data = data;
@@ -134,6 +143,10 @@ class _ProductTabState extends State<_ProductTab> {
       }
     );
 
+    this.typeDbox = DropdawnBox(
+      items: <String> ['กระถางต้นไม้', 'ต้นไม้', 'หินตกแต่ง', 'การ์ดอวยพร',],
+    );
+
     this.nameBox = new TextBox(
       label: 'ชื่อสินค้า',
       autoFocus: true,
@@ -146,11 +159,21 @@ class _ProductTabState extends State<_ProductTab> {
       maxLines: 8
     );
 
+    this.sizeDbox= DropdawnBox(
+      items: <String> ['S', 'M', 'L'],
+    );
+
+    this.statusDbox= DropdawnBox(
+      items: <String> ['อยู่ในการขาย', 'ยกเลิกการขาย'],
+    );
+
     this.totalPriceBox = new TextBox(
       label: 'ราคา', 
       autoFocus: true,
     );
+    this.totalPriceBox.controller.text = '0.0';
 
+    this.diaFetch = DialogBox(icon: Icons.storefront, title: 'ว่างจำหน่าย');
     this.diaInput = DialogBox();
 
     this.typeButTile = ButtonTile(
@@ -158,6 +181,20 @@ class _ProductTabState extends State<_ProductTab> {
       title: 'ประเภท',
       subTitle: '(แตะเลือกประเภท)',
       onTap: () async {
+        this.diaInput.show(
+          this.context,
+          icon: Icons.widgets,
+          title: 'ประเภท',
+          content: [this.typeDbox], 
+          actions: this._dialogDefaultActionsFunc(
+            done: () {
+              setState(() {
+                this.typeButTile.subTitle = this.typeDbox.items[this.typeDbox.current];
+              });
+            },
+            cancel: () {}
+          )
+        );
       }
     );
 
@@ -170,10 +207,10 @@ class _ProductTabState extends State<_ProductTab> {
           this.context,
           icon: Icons.reorder,
           title: 'ชื่อสินค้า',
-          content: this.nameBox.build(), 
+          content: [this.nameBox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
-              this.detailButTile.subTitle = this.detailBox.controller.text;
+              this.nameButTile.subTitle = this.nameBox.controller.text;
               setState(() {});
             },
             cancel: () {}
@@ -191,7 +228,7 @@ class _ProductTabState extends State<_ProductTab> {
           this.context,
           icon: Icons.receipt,
           title: 'รายละเอียดสินค้า',
-          content: this.detailBox.build(), 
+          content: [this.detailBox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.detailButTile.subTitle = this.detailBox.controller.text;
@@ -208,6 +245,20 @@ class _ProductTabState extends State<_ProductTab> {
       title: 'ขนาด',
       subTitle: '(แตะเพื่อเลือกขนาด)',
       onTap: () async {
+        this.diaInput.show(
+          this.context,
+          icon: Icons.change_history,
+          title: 'ขนาดสินค้า',
+          content: [this.sizeDbox], 
+          actions: this._dialogDefaultActionsFunc(
+            done: () {
+              setState(() {
+                this.sizeButTile.subTitle = this.sizeDbox.items[this.sizeDbox.current];
+              });
+            },
+            cancel: () {}
+          )
+        );
       }
     );
 
@@ -216,9 +267,20 @@ class _ProductTabState extends State<_ProductTab> {
       title: 'สถานะ',
       subTitle: '(แตะเพื่อเลือกสถานะ)',
       onTap: () async {
-        // this.statusButTile.fontSize = FontStatusSize;
-
-        // setState(() {});
+        this.diaInput.show(
+          this.context,
+          icon: Icons.link,
+          title: 'สถานะสินค้า',
+          content: [this.statusDbox], 
+          actions: this._dialogDefaultActionsFunc(
+            done: () {
+              setState(() {
+                this.statusButTile.subTitle = this.statusDbox.items[this.statusDbox.current];
+              });
+            },
+            cancel: () {}
+          )
+        );
       }
     );
 
@@ -232,7 +294,7 @@ class _ProductTabState extends State<_ProductTab> {
           this.context,
           icon: Icons.sentiment_very_satisfied,
           title: 'ราคาสินค้า',
-          content: this.totalPriceBox.build(), 
+          content: [this.totalPriceBox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.totalPriceButTile.fontSize = FontPriceSize;
@@ -253,13 +315,54 @@ class _ProductTabState extends State<_ProductTab> {
       colors: theme.button['saveColors'],
       onTap: () async {
         if (!this.saveBut.loading.isBegin) {
-          this.saveBut.loading.begin(then: () {
-            setState(() {
-              Future.delayed(const Duration(milliseconds: 2000), () {
-                this.saveBut.loading.end(then: () {
-                  setState(() {});
-                });
+          this.saveBut.loading.begin(then: () async {
+            setState(() {});
+
+            this.productModel = ProductModel(
+              type: this.typeDbox.items[this.typeDbox.current],
+              name: this.nameBox.controller.text,
+              detail: this.detailBox.controller.text,
+              size: [this.sizeDbox.items[this.sizeDbox.current]],
+              status: this.statusDbox.items[this.statusDbox.current],
+              price: double.parse(this.totalPriceBox.controller.text),
+              imgsURL: this.imgsGal.imgsURL
+            );
+
+            Post('http://mini-plant.comsciproject.com/product/add', this.productModel.toMap(), then: (dynamic response) {
+              dynamic result = jsonDecode(response.body);
+
+              this.diaFetch.content = <Widget> [
+                Text(result['descript'])
+              ];
+
+              if (result['status'] == 1) {
+                  this.diaFetch.show(this.context, dismiss: false, actions: <DialogBoxItem> [
+                    DialogBoxItem(
+                      text: 'เสร็จสิ้น', 
+                      onPressed: () {
+                        Navigator.of(this.context, rootNavigator: true).pop();
+                      }
+                    )
+                  ]);
+                } else {
+                  this.diaFetch.show(this.context, actions: <DialogBoxItem> [
+                    DialogBoxItem(
+                      text: 'ลองอีกครั้ง', 
+                      onPressed: () {
+                        Navigator.of(this.context, rootNavigator: true).pop();
+                      }
+                    )
+                  ]);
+                }
+
+              this.saveBut.loading.end(then: () {
+                setState(() {});
               });
+            }, error: (dynamic e) {
+              print(e);
+              // this.saveBut.loading.end(then: () {
+              //   setState(() {});
+              // });
             });
           });
         }
@@ -295,7 +398,7 @@ class _ProductTabState extends State<_ProductTab> {
   @override
   Widget build(BuildContext context) {
     this.saveBut.size[0] = MediaQuery.of(context).size.width*0.90;
-    // this.diaInput.size = MediaQuery.of(context).size.width*0.90;
+    // this.diaInput. = MediaQuery.of(context).size.width*0.90;
 
     return Scaffold(
       backgroundColor: BackgroundColor,
@@ -361,8 +464,7 @@ class _ProductTabState extends State<_ProductTab> {
               children: <Widget> [
                 this.saveBut.build(), 
               ]
-            ), 
-            DropdawnBox(),
+            ),
             SizedBox(height: 30,)
           ]
         ),
@@ -466,7 +568,7 @@ class _CompleteProductTabState extends State<_CompleteProductTab> {
           this.context,
           icon: Icons.receipt,
           title: 'รายละเอียดสินค้า',
-          content: this.detailBox.build(), 
+          content: [this.detailBox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.detailButTile.subTitle = this.detailBox.controller.text;
@@ -493,13 +595,12 @@ class _CompleteProductTabState extends State<_CompleteProductTab> {
       icon: Icons.sentiment_very_satisfied,
       title: 'ราคา',
       subTitle: '(แตะเพื่อเพิ่มราคา)',
-      
       onTap: () async {
         this.diaInput.show(
           this.context,
           icon: Icons.sentiment_very_satisfied,
           title: 'ราคาสินค้า',
-          content: this.totalPriceBox.build(), 
+          content: [this.totalPriceBox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.totalPriceButTile.fontSize = FontPriceSize;

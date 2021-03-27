@@ -96,7 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     this.logoutDia = new DialogBox(
       title: 'ออกจากระบบ',
-      content: Text('คุณต้องการอยากจะออกจากระบบตอนนี้?'),
+      content: <Widget> [ Text('คุณต้องการอยากจะออกจากระบบตอนนี้?') ],
       actions: <DialogBoxItem> [
         DialogBoxItem(text: 'ตกลง', onPressed: () {
           Navigator.of(context, rootNavigator: true).pop();

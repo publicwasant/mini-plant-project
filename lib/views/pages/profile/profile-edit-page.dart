@@ -134,7 +134,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
               this.saveBut.loading.end(then: () {
                 setState(() {});
-                this.fetchDia.content = result['descript'];
+                this.fetchDia.content = <Widget> [
+                  Text(result['descript'])
+                ];
 
                 if (result['status'] == 1) {
                   this.fetchDia.show(this.context, dismiss: false, actions: <DialogBoxItem> [

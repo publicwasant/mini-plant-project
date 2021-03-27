@@ -84,7 +84,7 @@ class ProductItem {
                         child: Container(
                           width: this.size['width'],
                           child: Text(
-                            this.productModel.title,
+                            this.productModel.name,
                             maxLines: this.size['line'].toInt(),
                             overflow: TextOverflow.fade,
                             style: TextStyle(fontSize: 12, color: Colors.grey[800]),
