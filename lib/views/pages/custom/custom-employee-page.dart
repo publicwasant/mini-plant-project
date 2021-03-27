@@ -15,6 +15,7 @@ import 'package:mp_v1_0/controllers/image/image-gallery.dart';
 
 import 'package:mp_v1_0/controllers/dropdawn-box/dropdawn-box.dart';
 
+import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 import 'package:mp_v1_0/controllers/fetch/fetch.dart';
 import 'package:mp_v1_0/models/product/product-model.dart';
 
@@ -340,7 +341,10 @@ class _ProductTabState extends State<_ProductTab> {
                     DialogBoxItem(
                       text: 'เสร็จสิ้น', 
                       onPressed: () {
+                        data['current'] = 2;
+
                         Navigator.of(this.context, rootNavigator: true).pop();
+                        ClearPage(this.context, '/home', data: data);
                       }
                     )
                   ]);
@@ -359,10 +363,6 @@ class _ProductTabState extends State<_ProductTab> {
                 setState(() {});
               });
             }, error: (dynamic e) {
-              print(e);
-              // this.saveBut.loading.end(then: () {
-              //   setState(() {});
-              // });
             });
           });
         }
