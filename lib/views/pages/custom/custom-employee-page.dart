@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/controllers/theme/theme.dart';
+import 'package:mp_v1_0/controllers/button/button-image.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/button/button-tab.dart';
 import 'package:mp_v1_0/controllers/button/button-tile.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
-import 'package:mp_v1_0/controllers/dialog-box/dialog-input.dart';
+import 'package:mp_v1_0/controllers/dialog-box/dialog-box.dart';
+// import 'package:mp_v1_0/controllers/dialog-box/dialog-input.dart';
 import 'package:mp_v1_0/controllers/image/image-slider.dart';
+import 'package:mp_v1_0/controllers/image/image-gallery.dart';
+
+import 'package:mp_v1_0/controllers/dropdawn-box/dropdawn-box.dart';
 
 Color AppBarBackgroundColor = Colors.deepPurpleAccent;
 Color BackgroundColor = Colors.grey[100];
@@ -88,12 +93,14 @@ class _ProductTabState extends State<_ProductTab> {
   dynamic data;
 
   List<String> imgsURL;
-  ImageSlider imageSliders;
+  ImageGallery imgsGal;
 
+  TextBox nameBox;
   TextBox detailBox;
   TextBox totalPriceBox;
 
-  ButtonTile imgButTile;
+  ButtonTile typeButTile;
+  ButtonTile nameButTile;
   ButtonTile detailButTile;
   ButtonTile sizeButTile;
   ButtonTile statusButTile;
@@ -101,10 +108,37 @@ class _ProductTabState extends State<_ProductTab> {
 
   ButtonTab saveBut;
 
-  DialogInput diaInput;
+  DialogBox diaInput;
   
   _ProductTabState ({dynamic data}) {
     this.data = data;
+
+    this.imgsGal = new ImageGallery(
+      imgsURL: [
+        'https://laz-img-sg.alicdn.com/p/6354748d295692179a650ca7cbb45524.jpg_720x720q80.jpg_.webp',
+        'https://www.homefurnishingdeals.com/wp-content/uploads/2017/01/Wish-you-have-a-nice-day-45-Round-Plastic-Plant-Flower-Pots-Home-Office-Decor-Planter-5-Colors-5-4inch-0.jpg',
+        'https://th-test-11.slatic.net/p/6ab545b542621c08d8b5e1c33dc27bba.jpg_720x720q80.jpg_.webp"',
+        'https://my-test-11.slatic.net/p/58bf63775c46d05dd36b117f552191dc.jpg_720x720q80.jpg_.webp',
+        'https://laz-img-sg.alicdn.com/p/6354748d295692179a650ca7cbb45524.jpg_720x720q80.jpg_.webp',
+        'https://www.homefurnishingdeals.com/wp-content/uploads/2017/01/Wish-you-have-a-nice-day-45-Round-Plastic-Plant-Flower-Pots-Home-Office-Decor-Planter-5-Colors-5-4inch-0.jpg',
+        'https://th-test-11.slatic.net/p/6ab545b542621c08d8b5e1c33dc27bba.jpg_720x720q80.jpg_.webp"',
+        'https://my-test-11.slatic.net/p/58bf63775c46d05dd36b117f552191dc.jpg_720x720q80.jpg_.webp',
+        'https://laz-img-sg.alicdn.com/p/6354748d295692179a650ca7cbb45524.jpg_720x720q80.jpg_.webp',
+        'https://www.homefurnishingdeals.com/wp-content/uploads/2017/01/Wish-you-have-a-nice-day-45-Round-Plastic-Plant-Flower-Pots-Home-Office-Decor-Planter-5-Colors-5-4inch-0.jpg',
+        'https://th-test-11.slatic.net/p/6ab545b542621c08d8b5e1c33dc27bba.jpg_720x720q80.jpg_.webp"',
+        'https://my-test-11.slatic.net/p/58bf63775c46d05dd36b117f552191dc.jpg_720x720q80.jpg_.webp',
+      ],
+      onTap: (item) {
+      },
+      onLongTap: (item) {
+      }
+    );
+
+    this.nameBox = new TextBox(
+      label: 'ชื่อสินค้า',
+      autoFocus: true,
+      maxLines: 8
+    );
 
     this.detailBox = new TextBox(
       label: 'รายละเอียด', 
@@ -114,30 +148,37 @@ class _ProductTabState extends State<_ProductTab> {
 
     this.totalPriceBox = new TextBox(
       label: 'ราคา', 
-      autoFocus: true
+      autoFocus: true,
     );
 
-    this.diaInput = DialogInput();
+    this.diaInput = DialogBox();
 
-    this.imgsURL = <String> [
-      // 'https://laz-img-sg.alicdn.com/p/6354748d295692179a650ca7cbb45524.jpg_720x720q80.jpg_.webp',
-      //   'https://www.homefurnishingdeals.com/wp-content/uploads/2017/01/Wish-you-have-a-nice-day-45-Round-Plastic-Plant-Flower-Pots-Home-Office-Decor-Planter-5-Colors-5-4inch-0.jpg',
-      //   'https://th-test-11.slatic.net/p/6ab545b542621c08d8b5e1c33dc27bba.jpg_720x720q80.jpg_.webp"',
-      //   'https://my-test-11.slatic.net/p/58bf63775c46d05dd36b117f552191dc.jpg_720x720q80.jpg_.webp',
-    ];
-
-    this.imageSliders = new ImageSlider(
-      onPageChanged: (int index) {
-        setState(() {});
-      },
-      imgsURL: this.imgsURL
-    );
-
-    this.imgButTile = ButtonTile(
-      icon: Icons.image,
-      title: 'รูปภาพ',
-      subTitle: '(แตะเพื่อเพิ่มรุปภาพ)',
+    this.typeButTile = ButtonTile(
+      icon: Icons.widgets,
+      title: 'ประเภท',
+      subTitle: '(แตะเลือกประเภท)',
       onTap: () async {
+      }
+    );
+
+    this.nameButTile = ButtonTile(
+      icon: Icons.reorder,
+      title: 'ชื่อสินค้า',
+      subTitle: '(แตะเพื่อเพิ่มชื่อสินค้า)',
+      onTap: () async {
+        this.diaInput.show(
+          this.context,
+          icon: Icons.reorder,
+          title: 'ชื่อสินค้า',
+          content: this.nameBox.build(), 
+          actions: this._dialogDefaultActionsFunc(
+            done: () {
+              this.detailButTile.subTitle = this.detailBox.controller.text;
+              setState(() {});
+            },
+            cancel: () {}
+          )
+        );
       }
     );
 
@@ -150,9 +191,7 @@ class _ProductTabState extends State<_ProductTab> {
           this.context,
           icon: Icons.receipt,
           title: 'รายละเอียดสินค้า',
-          content: <TextBox> [
-            this.detailBox
-          ], 
+          content: this.detailBox.build(), 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.detailButTile.subTitle = this.detailBox.controller.text;
@@ -193,9 +232,7 @@ class _ProductTabState extends State<_ProductTab> {
           this.context,
           icon: Icons.sentiment_very_satisfied,
           title: 'ราคาสินค้า',
-          content: <TextBox> [
-            this.totalPriceBox
-          ], 
+          content: this.totalPriceBox.build(), 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.totalPriceButTile.fontSize = FontPriceSize;
@@ -258,7 +295,7 @@ class _ProductTabState extends State<_ProductTab> {
   @override
   Widget build(BuildContext context) {
     this.saveBut.size[0] = MediaQuery.of(context).size.width*0.90;
-    this.diaInput.size = MediaQuery.of(context).size.width*0.90;
+    // this.diaInput.size = MediaQuery.of(context).size.width*0.90;
 
     return Scaffold(
       backgroundColor: BackgroundColor,
@@ -287,7 +324,7 @@ class _ProductTabState extends State<_ProductTab> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
                       Text(
-                        '(เพิ่มข้อมูลเกี่ยวกับสินค้า)', 
+                        '(เพิ่มรูปภาพสินค้า)', 
                         style: TextStyle(
                           fontSize: FontSubTitlePageSize,
                           color: FontColor
@@ -298,21 +335,19 @@ class _ProductTabState extends State<_ProductTab> {
                 ],
               )
             ),
-            (this.imgsURL.length > 0) ? (
-              this.imageSliders.build(context: context, state: this)
-            ) : Container(
+            Container(
+              padding: EdgeInsets.only(top: 15, bottom: 15),
               color: Colors.grey.withOpacity(0.16),
-              width: MediaQuery.of(context).size.width,
-              child: Icon(Icons.image, size: 150, color: Colors.grey.withOpacity(0.8))
+              child: this.imgsGal.build(context: context)
             ),
-            SizedBox(height: 15),
             Container(
               padding: const EdgeInsets.all(15),
               child: Card(
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    this.imgButTile.build(),
+                    this.typeButTile.build(),
+                    this.nameButTile.build(),
                     this.detailButTile.build(),
                     this.sizeButTile.build(),
                     this.statusButTile.build(),
@@ -327,6 +362,7 @@ class _ProductTabState extends State<_ProductTab> {
                 this.saveBut.build(), 
               ]
             ), 
+            DropdawnBox(),
             SizedBox(height: 30,)
           ]
         ),
@@ -367,7 +403,7 @@ class _CompleteProductTabState extends State<_CompleteProductTab> {
 
   ButtonTab saveBut;
 
-  DialogInput diaInput;
+  DialogBox diaInput;
   
   _CompleteProductTabState ({dynamic data}) {
     this.data = data;
@@ -411,7 +447,7 @@ class _CompleteProductTabState extends State<_CompleteProductTab> {
       autoFocus: true
     );
 
-    this.diaInput = DialogInput();
+    this.diaInput = DialogBox();
 
     this.imgsButTile = ButtonTile(
       icon: Icons.image,
@@ -430,9 +466,7 @@ class _CompleteProductTabState extends State<_CompleteProductTab> {
           this.context,
           icon: Icons.receipt,
           title: 'รายละเอียดสินค้า',
-          content: <TextBox> [
-            this.detailBox
-          ], 
+          content: this.detailBox.build(), 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.detailButTile.subTitle = this.detailBox.controller.text;
@@ -465,9 +499,7 @@ class _CompleteProductTabState extends State<_CompleteProductTab> {
           this.context,
           icon: Icons.sentiment_very_satisfied,
           title: 'ราคาสินค้า',
-          content: <TextBox> [
-            this.totalPriceBox
-          ], 
+          content: this.totalPriceBox.build(), 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               this.totalPriceButTile.fontSize = FontPriceSize;
@@ -535,7 +567,7 @@ class _CompleteProductTabState extends State<_CompleteProductTab> {
     this.cardButTab.size[0] = MediaQuery.of(context).size.width*0.90;
     
     this.saveBut.size[0] = MediaQuery.of(context).size.width*0.90;
-    this.diaInput.size = MediaQuery.of(context).size.width*0.90;
+    // this.diaInput.size = MediaQuery.of(context).size.width*0.90;
 
     return Scaffold(
       backgroundColor: BackgroundColor,

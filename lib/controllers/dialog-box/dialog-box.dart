@@ -4,12 +4,20 @@ import 'package:flutter/cupertino.dart';
 class DialogBox {
   IconData icon;
   String title;
-  String content;
+  Widget content;
+
+  double width;
+  double height;
 
   List<DialogBoxItem> actions;
   Widget child;
 
-  DialogBox ({IconData icon, String title='', String content='', List<DialogBoxItem> actions}) {
+  DialogBox ({
+    IconData icon, 
+    String title='', 
+    Widget content,
+    List<DialogBoxItem> actions
+  }) {
     this.icon = icon;
     this.title = title;
     this.content = content;
@@ -17,10 +25,12 @@ class DialogBox {
     this.child = child;
   }
 
-  void show (BuildContext context, {IconData icon, bool dismiss=true, String title='', String content='', List<DialogBoxItem> actions}) async {
+  //https://stackoverflow.com/questions/53913192/flutter-change-the-width-of-an-alertdialog
+
+  void show (BuildContext context, {IconData icon, bool dismiss=true, String title='', Widget content, List<DialogBoxItem> actions}) async {
     this.icon = (icon != null) ? icon : this.icon;
     this.title = (title != '') ? title : this.title;
-    this.content = (content != '') ? content : this.content;
+    this.content = (content != null) ? content : this.content;
     this.actions = (actions != null) ? actions : this.actions;
     
     return showDialog(
@@ -47,7 +57,9 @@ class DialogBox {
               )
             ],
           ),
-          content: Text(this.content),
+          content: Expanded(
+            child: (this.content != null) ? this.content : Container()
+          ),
           actions: this.actions.map((item) => item.build()).toList()     
       );
     });

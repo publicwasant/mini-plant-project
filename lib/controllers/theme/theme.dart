@@ -87,7 +87,21 @@ class Theme {
     }
   };
 
+  Map<String, dynamic> buttonImage = {
+    'defaultSizes': {
+      'small': [50.0, 50.0, 16.0, 12.0],
+      'medium': [70.0, 70.0, 16.0, 12.0],
+      'large': [90.0, 90.0, 16.0, 12.0],
+    },
+    'defaultColors': {
+      'background' : Colors.white.withOpacity(0.0),
+      'font' : Colors.grey[800],
+      'border' : Colors.grey[800]
+    },
+  };
+
   Theme () {
+    
   }
 }
 
