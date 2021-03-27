@@ -57,10 +57,10 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
     //   discount: 0.21,
     //   total: 17,
     //   imgsURL: [
-    //     'https://laz-img-sg.alicdn.com/p/6354748d295692179a650ca7cbb45524.jpg_720x720q80.jpg_.webp',
-    //     'https://www.homefurnishingdeals.com/wp-content/uploads/2017/01/Wish-you-have-a-nice-day-45-Round-Plastic-Plant-Flower-Pots-Home-Office-Decor-Planter-5-Colors-5-4inch-0.jpg',
-    //     'https://th-test-11.slatic.net/p/6ab545b542621c08d8b5e1c33dc27bba.jpg_720x720q80.jpg_.webp"',
-    //     'https://my-test-11.slatic.net/p/58bf63775c46d05dd36b117f552191dc.jpg_720x720q80.jpg_.webp',
+        // 'https://laz-img-sg.alicdn.com/p/6354748d295692179a650ca7cbb45524.jpg_720x720q80.jpg_.webp',
+        // 'https://www.homefurnishingdeals.com/wp-content/uploads/2017/01/Wish-you-have-a-nice-day-45-Round-Plastic-Plant-Flower-Pots-Home-Office-Decor-Planter-5-Colors-5-4inch-0.jpg',
+        // 'https://th-test-11.slatic.net/p/6ab545b542621c08d8b5e1c33dc27bba.jpg_720x720q80.jpg_.webp"',
+        // 'https://my-test-11.slatic.net/p/58bf63775c46d05dd36b117f552191dc.jpg_720x720q80.jpg_.webp',
     //   ]
     // );
 

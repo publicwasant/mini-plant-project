@@ -70,7 +70,7 @@ class Button {
                       height: this.size[1],
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(this.size[1]/2),
-                        child: ImageMini(url: this.imgURL, visitExcept: imgVisitExcept).build(),
+                        child: ImageBox(url: this.imgURL, visitExcept: imgVisitExcept).build(),
                       )
                     )
                   )

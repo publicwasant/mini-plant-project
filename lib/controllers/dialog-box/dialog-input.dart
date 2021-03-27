@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:mp_v1_0/controllers/text-box/text-box.dart';
 
 class DialogInput {
+  IconData icon;
   String title;
   double size;
   List<TextBox> content;
@@ -11,7 +12,8 @@ class DialogInput {
   List<DialogBoxItem> actions;
   Widget child;
 
-  DialogInput ({String title='', double size=400.0, List<TextBox> content, List<DialogBoxItem> actions}) {
+  DialogInput ({IconData icon, String title='', double size=400.0, List<TextBox> content, List<DialogBoxItem> actions}) {
+    this.icon = icon;
     this.title = title;
     this.size = size;
     this.content = (content != null) ? content : <TextBox> [];
@@ -19,23 +21,36 @@ class DialogInput {
     this.child = child;
   }
 
-  void show (BuildContext context, {bool dismiss=true, String title='', double size=400.0, String content='', List<DialogBoxItem> actions}) async {
+  void show (BuildContext context, {bool dismiss=true, IconData icon, String title='', double size=400.0, List<TextBox> content, List<DialogBoxItem> actions}) async {
+    this.icon = (icon != null) ? icon : this.icon;
     this.title = (title != '') ? title : this.title;
     this.size = (size != 400.0) ? size : this.size;
-    this.content = (content != '') ? content : this.content;
+    this.content = (content != null) ? content : this.content;
     this.actions = (actions != null) ? actions : this.actions;
-    
+
     return showDialog(
       context: context,
       barrierDismissible: dismiss,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            this.title,
-            style: TextStyle(
-              fontSize: 22,
-              fontStyle: FontStyle.normal,
-            )
+          title: Row(
+            children: <Widget> [
+              (this.icon != null) ? (
+                Row(
+                  children: <Widget> [
+                    Icon(this.icon),
+                    SizedBox(width: 5)
+                  ],
+                )
+              ) : Container(),
+              Text(
+                this.title,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontStyle: FontStyle.normal,
+                )
+              )
+            ],
           ),
           content: new Row(
             children: this.content.map((textBox) => Expanded(
@@ -44,15 +59,6 @@ class DialogInput {
                 child: textBox.build(),
               )
             )).toList(),
-            // children: <Widget>[
-              // new Expanded(
-              //   child: new TextField(
-              //     autofocus: true,
-              //     decoration: new InputDecoration(
-              //         labelText: 'Full Name', hintText: 'eg. John Smith'),
-              //   ),
-              // )
-            // ],
           ),
           actions: this.actions.map((item) => item.build()).toList()     
       );
@@ -79,4 +85,13 @@ class DialogBoxItem {
       },
     );
   }
+}
+
+DialogBoxItem ActionItem ({String name='default', Function onTap}) {
+  return DialogBoxItem(
+    text: name,
+    onPressed: () {
+      if (onTap != null) onTap();
+    }
+  );
 }

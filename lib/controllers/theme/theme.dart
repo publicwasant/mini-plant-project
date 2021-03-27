@@ -52,6 +52,11 @@ class Theme {
       'font' : Colors.white,
       'border' : Colors.white
     },
+    'saveColors2': {
+      'background' : Colors.deepPurpleAccent,
+      'font' : Colors.white,
+      'border' : Colors.white
+    },
   };
 
   Map<String, dynamic> buttonTab = {

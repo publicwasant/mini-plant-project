@@ -75,7 +75,7 @@ class ProductItem {
                             topLeft: Radius.circular(this.radius), 
                             topRight: Radius.circular(this.radius)
                           ),
-                          child: ImageMini(url: this.productModel.imgsURL[0], visitExcept: true).build()
+                          child: ImageBox(url: this.productModel.imgsURL[0], visitExcept: true).build()
                         ),
                       ),
                       SizedBox(height: 5,),

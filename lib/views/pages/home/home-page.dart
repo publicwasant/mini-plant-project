@@ -41,7 +41,9 @@ class _HomePageState extends State<HomePage> {
     this.menu = new Menu(options: [
       ['สินค้า', Icon(Icons.storefront)],
       ['ประวัติ', Icon(Icons.history)],
-      ['กำหนดเอง', Icon(Icons.add_circle_outline)],
+      [
+        (data['user']['user_status'] == 0) ? 'เพิ่มสินค้า' : 'กำหนดเอง', 
+        Icon(Icons.add_circle_outline)],
       ['ตะกร้า', Icon(Icons.shopping_cart)],
       ['เมนู', Icon(Icons.dehaze)],
     ], current: this.current);

@@ -9,12 +9,18 @@ class ButtonTile {
   String subTitle;
   IconData icon;
 
+  double fontSize;
+  Color fontColor;
+
   Function then;
 
-  ButtonTile ({String title='', String subTitle='', IconData icon, Function onTap}) {
+  ButtonTile ({String title='', String subTitle='', IconData icon, double fontSize=12, Color fontColor, Function onTap}) {
     this.title = title;
     this.subTitle = subTitle;
     this.icon = icon;
+
+    this.fontSize = fontSize;
+    this.fontColor = (fontColor != null) ? fontColor : FontColor;
 
     this.then = onTap;
   }
@@ -33,8 +39,8 @@ class ButtonTile {
           subtitle: Text(
             this.subTitle,
             style: TextStyle(
-              fontSize: FontDetailSize,
-              color: FontColor
+              fontSize: this.fontSize,
+              color: this.fontColor
             ),
           ),
         ),

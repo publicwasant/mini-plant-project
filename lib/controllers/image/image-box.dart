@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/controllers/loader/loader.dart';
 
-class ImageMini {
+class ImageBox{
   String url;
   bool visitExcept;
 
-  ImageMini ({String url, bool visitExcept=false}) {
+  ImageBox ({String url, bool visitExcept=false}) {
     this.url = url;
     this.visitExcept = visitExcept;
   }

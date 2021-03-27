@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class DialogBox {
+  IconData icon;
   String title;
   String content;
 
   List<DialogBoxItem> actions;
   Widget child;
 
-  DialogBox ({String title='', String content='', List<DialogBoxItem> actions}) {
+  DialogBox ({IconData icon, String title='', String content='', List<DialogBoxItem> actions}) {
+    this.icon = icon;
     this.title = title;
     this.content = content;
     this.actions = actions;
     this.child = child;
   }
 
-  void show (BuildContext context, {bool dismiss=true, String title='', String content='', List<DialogBoxItem> actions}) async {
+  void show (BuildContext context, {IconData icon, bool dismiss=true, String title='', String content='', List<DialogBoxItem> actions}) async {
+    this.icon = (icon != null) ? icon : this.icon;
     this.title = (title != '') ? title : this.title;
     this.content = (content != '') ? content : this.content;
     this.actions = (actions != null) ? actions : this.actions;
@@ -25,12 +28,24 @@ class DialogBox {
       barrierDismissible: dismiss,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            this.title,
-            style: TextStyle(
-              fontSize: 22,
-              fontStyle: FontStyle.normal,
-            )
+          title: Row(
+            children: <Widget> [ 
+              (this.icon != null) ? (
+                Row(
+                  children: <Widget> [
+                    Icon(this.icon),
+                    SizedBox(width: 5)   
+                  ],
+                )
+              ) : Container(),
+              Text(
+                this.title,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontStyle: FontStyle.normal,
+                )
+              )
+            ],
           ),
           content: Text(this.content),
           actions: this.actions.map((item) => item.build()).toList()     
@@ -59,4 +74,13 @@ class DialogBoxItem {
       },
     );
   }
+}
+
+DialogBoxItem ActionItem ({String name='default', Function onTap}) {
+  return DialogBoxItem(
+    text: name,
+    onPressed: () {
+      if (onTap != null) onTap();
+    }
+  );
 }
