@@ -2,7 +2,9 @@
     package="com.example.mp_v1_0">
    <application
         android:label="mp_v1_0"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
+        
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
