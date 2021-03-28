@@ -1,18 +1,33 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:mp_v1_0/controllers/theme/theme.dart';
+import 'package:mp_v1_0/controllers/button/button-image.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/button/button-tab.dart';
-import 'package:mp_v1_0/controllers/loader/loader.dart';
+import 'package:mp_v1_0/controllers/button/button-tile.dart';
+import 'package:mp_v1_0/controllers/text-box/text-box.dart';
+import 'package:mp_v1_0/controllers/dialog-box/dialog-box.dart';
+import 'package:mp_v1_0/controllers/image/image-slider.dart';
+import 'package:mp_v1_0/controllers/image/image-gallery.dart';
+import 'package:mp_v1_0/controllers/theme/theme.dart';
 
-import 'package:mp_v1_0/controllers/shared-data/shared-data.dart';
+import 'package:mp_v1_0/controllers/dropdawn-box/dropdawn-box.dart';
 
+import 'package:mp_v1_0/controllers/redirect/redirect.dart';
+import 'package:mp_v1_0/controllers/fetch/fetch.dart';
+import 'package:mp_v1_0/models/product/product-model.dart';
+
+Color AppBarBackgroundColor = Colors.deepPurpleAccent;
 Color BackgroundColor = Colors.grey[100];
 Color FontColor = Colors.grey[800];
 Color PriceColor = Colors.lightBlue[800];
 
 double FontTitlePageSize = 28;
+double FontSubTitlePageSize = 16;
+
 double FontTitleSize = 18;
 double FontDetailSize = 12;
 double FontStatusSize = 18;
@@ -34,63 +49,79 @@ class CustomCustomerPage extends StatefulWidget {
 class _CustomCustomerPageState extends State<CustomCustomerPage> {
   dynamic data;
 
-  /*
-   * 0 = admin,
-   * 1 = customer, general users
-   */
-
   ButtonTab plantButTab;
   ButtonTab marbleButTab;
   ButtonTab potButTab;
   ButtonTab cardButTab;
 
-  Button basketBut;
-  Button buyBut;
-  Button saveBut;
+  TextBox totalPriceBox;
+
+  ButtonTile totalPriceButTile;
+  ButtonTab basketButb;
+  ButtonTab buyButb;
+  DialogBox diaFetch;
   
   _CustomCustomerPageState ({dynamic data}) {
     this.data = data;
     
-    plantButTab = new ButtonTab(
+    this.plantButTab = new ButtonTab(
       icon: Icons.grass,
       title: 'ต้นไม้เล็ก',
       subTitle: '(เลือกสินค้าประเภทต้นไม้)',
       size: 'medium',
     );
 
-    marbleButTab = new ButtonTab(
+    this.marbleButTab = new ButtonTab(
       icon: Icons.grain,
       title: 'หินตกแต่ง',
       subTitle: '(เลือกสินค้าประเภทหินตกแต่ง)',
       size: 'medium'
     );
 
-    potButTab = new ButtonTab(
+    this.potButTab = new ButtonTab(
       icon: Icons.panorama_vertical,
       title: 'กระถาง',
       subTitle: '(เลือกสินค้าประเภทกระถาง)',
       size: 'medium'
     );
 
-    cardButTab = new ButtonTab(
-      icon: Icons.fireplace,
+    this.cardButTab = new ButtonTab(
+      icon: Icons.settings_system_daydream,
       title: 'การ์ด',
       subTitle: '(เลือกสินค้าประเภทการ์ด)',
       size: 'medium'
     );
 
-    this.basketBut = new Button(
-      icon: Icons.shopping_cart,
-      title: 'ยิบใส่ตะกล้า',
-      size: 'small',
-      border: 1.0,
-      colors: theme.button['basketColors'],
+    this.totalPriceBox = new TextBox(
+      label: 'ราคา',
+      autoFocus: true
+    );
+
+    this.diaFetch = DialogBox();
+
+    this.totalPriceButTile = ButtonTile(
+      icon: Icons.sentiment_very_satisfied,
+      title: 'ราคา',
+      subTitle: '฿ ' + 200.toString(),
+      fontSize: FontPriceSize,
+      fontColor: PriceColor,
       onTap: () async {
-        if (!this.basketBut.loading.isBegin) {
-          this.basketBut.loading.begin(then: () {
+        //code...
+      }
+    );
+
+    this.basketButb = new ButtonTab(
+      icon: Icons.shopping_cart,
+      title: 'ยิบไส่ตะกร้า',
+      size: 'small',
+      colors: theme.button['basketColors'],
+      border: 1.0,
+      onTap: () async {
+        if (!this.basketButb.loading.isBegin) {
+          this.basketButb.loading.begin(then: () {
             setState(() {
               Future.delayed(const Duration(milliseconds: 2000), () {
-                this.basketBut.loading.end(then: () {
+                this.basketButb.loading.end(then: () {
                   setState(() {});
                 });
               });
@@ -100,37 +131,17 @@ class _CustomCustomerPageState extends State<CustomCustomerPage> {
       }
     );
 
-    this.buyBut = new Button(
+    this.buyButb = new ButtonTab(
       icon: Icons.shopping_basket,
       title: 'ซื้อเลย',
       size: 'small',
-      colors: theme.button['buyColors'],
-      onTap: () async {
-        if (!this.buyBut.loading.isBegin) {
-          this.buyBut.loading.begin(then: () {
-            setState(() {
-              Future.delayed(const Duration(milliseconds: 2000), () {
-                this.buyBut.loading.end(then: () {
-                  setState(() {});
-                });
-              });
-            });
-          });
-        }
-      }
-    );
-
-    this.saveBut = new Button(
-      icon: Icons.add_circle,
-      title: 'บันทึก',
-      size: 'small',
       colors: theme.button['saveColors'],
       onTap: () async {
-        if (!this.saveBut.loading.isBegin) {
-          this.saveBut.loading.begin(then: () {
+        if (!this.buyButb.loading.isBegin) {
+          this.buyButb.loading.begin(then: () {
             setState(() {
               Future.delayed(const Duration(milliseconds: 2000), () {
-                this.saveBut.loading.end(then: () {
+                this.buyButb.loading.end(then: () {
                   setState(() {});
                 });
               });
@@ -141,18 +152,44 @@ class _CustomCustomerPageState extends State<CustomCustomerPage> {
     );
   }
 
+  List<DialogBoxItem> _dialogDefaultActionsFunc ({Function done, Function cancel}) {
+    return <DialogBoxItem> [
+      DialogBoxItem(
+        text: 'เสร็จสิ้น', 
+        onPressed: () {
+          if (done != null) {
+            done();
+          } 
+
+          Navigator.of(this.context, rootNavigator: true).pop();
+        }
+      ),
+      DialogBoxItem(
+        text: 'ยกเลิก', 
+        onPressed: () {
+          if (cancel != null) {
+            cancel();
+          }
+
+          Navigator.of(this.context, rootNavigator: true).pop();
+        }
+      )
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     this.plantButTab.size[0] = MediaQuery.of(context).size.width*0.90;
     this.marbleButTab.size[0] = MediaQuery.of(context).size.width*0.90;
     this.potButTab.size[0] = MediaQuery.of(context).size.width*0.90;
     this.cardButTab.size[0] = MediaQuery.of(context).size.width*0.90;
+    
+    this.basketButb.size[0] = MediaQuery.of(context).size.width*0.90;
+    this.buyButb.size[0] = MediaQuery.of(context).size.width*0.90;
+    // this.diaInput.size = MediaQuery.of(context).size.width*0.90;
 
     return Scaffold(
       backgroundColor: BackgroundColor,
-      appBar: AppBar(
-        title: Text('กำหนดเอง'),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: <Widget> [
@@ -161,22 +198,32 @@ class _CustomCustomerPageState extends State<CustomCustomerPage> {
               padding: const EdgeInsets.all(15),
               child: Column(
                 children: <Widget> [
-                  SizedBox(height: 30),
+                  SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
-                      Container(
-                        child: Text(
-                          'เลือกส่วนประกอบสินค้า', 
-                          style: TextStyle(
-                            fontSize: FontTitlePageSize,
-                            color: FontColor
-                          )
-                        ),
-                      )
+                      Text(
+                        'กำหนดสินค้าสำเร็จรูป', 
+                        style: TextStyle(
+                          fontSize: FontTitlePageSize,
+                          color: FontColor
+                        )
+                      ),
                     ],
                   ),
-                  SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget> [
+                      Text(
+                        '(เลือกส่วนประกอบสินค้า)', 
+                        style: TextStyle(
+                          fontSize: FontSubTitlePageSize,
+                          color: FontColor
+                        )
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
@@ -210,21 +257,7 @@ class _CustomCustomerPageState extends State<CustomCustomerPage> {
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    SizedBox(height: 15,),
-                    Container(
-                      child: ListTile(
-                        leading: Icon(Icons.sentiment_very_satisfied),
-                        title: Text('ราคารวม'),
-                        subtitle: Text(
-                          '฿ 150',
-                          style: TextStyle(
-                            fontSize: FontPriceSize, 
-                            color: PriceColor
-                          ),
-                        )
-                      ),
-                    ),
-                    SizedBox(height: 15,)
+                    this.totalPriceButTile.build()
                   ]
                 ),
               ),
@@ -232,8 +265,13 @@ class _CustomCustomerPageState extends State<CustomCustomerPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
-                this.basketBut.build(),
-                this.buyBut.build(),
+                this.basketButb.build()
+              ]
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget> [
+                this.buyButb.build()
               ]
             ), 
             SizedBox(height: 30,)

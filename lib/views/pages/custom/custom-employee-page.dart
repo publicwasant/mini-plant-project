@@ -49,8 +49,8 @@ class _CustomEmployeePageState extends State<CustomEmployeePage> {
             title: Text('กำหนดเอง'),
             bottom: TabBar(
               tabs: [
-                Tab(text: 'ส่วนประกอบสินค้า', icon: Icon(Icons.scatter_plot)),
-                Tab(text: 'สินค้าสำเร็จรูป', icon: Icon(Icons.spa)),
+                Tab(text: 'เพิ่มสินค้า', icon: Icon(Icons.scatter_plot)),
+                Tab(text: 'ชื้อสินค้าสำเร็จรูป', icon: Icon(Icons.spa)),
               ],
             ),
           ),

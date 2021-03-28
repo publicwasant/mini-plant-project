@@ -128,12 +128,11 @@ class _ProductTabState extends State<ProductTab> {
           this.context,
           icon: Icons.widgets,
           title: 'ประเภท',
-          content: [this.typeDbox], 
+          content: [this.typeDbox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
-              setState(() {
-                this.typeButTile.subTitle = this.typeDbox.items[this.typeDbox.current];
-              });
+              this.typeButTile.subTitle = this.typeDbox.items[this.typeDbox.current];
+              setState(() {});
             },
             cancel: () {}
           )
@@ -192,7 +191,7 @@ class _ProductTabState extends State<ProductTab> {
           this.context,
           icon: Icons.change_history,
           title: 'ขนาดสินค้า',
-          content: [this.sizeDbox], 
+          content: [this.sizeDbox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               setState(() {
@@ -214,11 +213,14 @@ class _ProductTabState extends State<ProductTab> {
           this.context,
           icon: Icons.link,
           title: 'สถานะสินค้า',
-          content: [this.statusDbox], 
+          content: [this.statusDbox.build()], 
           actions: this._dialogDefaultActionsFunc(
             done: () {
               setState(() {
+                print(this.statusDbox.current);
                 this.statusButTile.subTitle = this.statusDbox.items[this.statusDbox.current];
+                this.statusButTile.fontSize = FontPriceSize;
+                this.statusButTile.fontColor = (this.statusDbox.current == 1) ? Colors.red[800] : Colors.green[800];
               });
             },
             cancel: () {}

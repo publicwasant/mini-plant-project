@@ -69,7 +69,12 @@ class Theme {
       'background': Colors.white,
       'font': Colors.grey[800],
       'border': Colors.grey[300]
-    }
+    },
+    'basketColors': {
+      'background' : Colors.lightBlue[800].withOpacity(0.0),
+      'font' : Colors.lightBlue[800],
+      'border' : Colors.lightBlue[800]
+    },
   };
   
   Map<String, dynamic> buttonOval = {

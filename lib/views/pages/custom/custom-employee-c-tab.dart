@@ -61,7 +61,8 @@ class _CompleteProductTabState extends State<CompleteProductTab> {
   ButtonTile statusButTile;
   ButtonTile totalPriceButTile;
 
-  ButtonTab saveBut;
+  ButtonTab basketButb;
+  ButtonTab buyButb;
 
   DialogBox diaInput;
   
@@ -96,92 +97,54 @@ class _CompleteProductTabState extends State<CompleteProductTab> {
       size: 'medium'
     );
 
-    this.detailBox = new TextBox(
-      label: 'รายละเอียด',
-      autoFocus: true, 
-      maxLines: 8
-    );
-
     this.totalPriceBox = new TextBox(
       label: 'ราคา',
       autoFocus: true
     );
 
-    this.diaInput = DialogBox();
-
-    this.imgsButTile = ButtonTile(
-      icon: Icons.image,
-      title: 'รูปภาพเพิ่มเติม',
-      subTitle: '(แตะเพื่อเลือกรูปภาพ)',
-      onTap: () async {
-      }
-    );
-
-    this.detailButTile = ButtonTile(
-      icon: Icons.receipt,
-      title: 'รายละเอียด',
-      subTitle: '(แตะเพื่อเพิ่มรายละเอียด)',
-      onTap: () async {
-        this.diaInput.show(
-          this.context,
-          icon: Icons.receipt,
-          title: 'รายละเอียดสินค้า',
-          content: [this.detailBox.build()], 
-          actions: this._dialogDefaultActionsFunc(
-            done: () {
-              this.detailButTile.subTitle = this.detailBox.controller.text;
-              setState(() {});
-            },
-            cancel: () {}
-          )
-        );
-      }
-    );
-
-    this.statusButTile = ButtonTile(
-      icon: Icons.link,
-      title: 'สถานะ',
-      subTitle: '(แตะเพื่อเลือกสถานะ)',
-      onTap: () async {
-        // this.statusButTile.fontSize = FontStatusSize;
-        // setState(() {});
-      }
-    );
-
     this.totalPriceButTile = ButtonTile(
       icon: Icons.sentiment_very_satisfied,
       title: 'ราคา',
-      subTitle: '(แตะเพื่อเพิ่มราคา)',
+      subTitle: '฿ ' + 200.toString(),
+      fontSize: FontPriceSize,
+      fontColor: PriceColor,
       onTap: () async {
-        this.diaInput.show(
-          this.context,
-          icon: Icons.sentiment_very_satisfied,
-          title: 'ราคาสินค้า',
-          content: [this.totalPriceBox.build()], 
-          actions: this._dialogDefaultActionsFunc(
-            done: () {
-              this.totalPriceButTile.fontSize = FontPriceSize;
-              this.totalPriceButTile.fontColor = PriceColor;
-              this.totalPriceButTile.subTitle = '฿ ' + this.totalPriceBox.controller.text;
-              setState(() {});
-            },
-            cancel: () {}
-          )
-        );
+        
       }
     );
 
-    this.saveBut = new ButtonTab(
-      icon: Icons.add_circle,
-      title: 'วางจำหน่าย',
+    this.basketButb = new ButtonTab(
+      icon: Icons.shopping_cart,
+      title: 'ยิบไส่ตะกร้า',
+      size: 'small',
+      colors: theme.button['basketColors'],
+      border: 1.0,
+      onTap: () async {
+        if (!this.basketButb.loading.isBegin) {
+          this.basketButb.loading.begin(then: () {
+            setState(() {
+              Future.delayed(const Duration(milliseconds: 2000), () {
+                this.basketButb.loading.end(then: () {
+                  setState(() {});
+                });
+              });
+            });
+          });
+        }
+      }
+    );
+
+    this.buyButb = new ButtonTab(
+      icon: Icons.shopping_basket,
+      title: 'ซื้อเลย',
       size: 'small',
       colors: theme.button['saveColors'],
       onTap: () async {
-        if (!this.saveBut.loading.isBegin) {
-          this.saveBut.loading.begin(then: () {
+        if (!this.buyButb.loading.isBegin) {
+          this.buyButb.loading.begin(then: () {
             setState(() {
               Future.delayed(const Duration(milliseconds: 2000), () {
-                this.saveBut.loading.end(then: () {
+                this.buyButb.loading.end(then: () {
                   setState(() {});
                 });
               });
@@ -224,8 +187,8 @@ class _CompleteProductTabState extends State<CompleteProductTab> {
     this.potButTab.size[0] = MediaQuery.of(context).size.width*0.90;
     this.cardButTab.size[0] = MediaQuery.of(context).size.width*0.90;
     
-    this.saveBut.size[0] = MediaQuery.of(context).size.width*0.90;
-    // this.diaInput.size = MediaQuery.of(context).size.width*0.90;
+    this.basketButb.size[0] = MediaQuery.of(context).size.width*0.90;
+    this.buyButb.size[0] = MediaQuery.of(context).size.width*0.90;
 
     return Scaffold(
       backgroundColor: BackgroundColor,
@@ -242,7 +205,7 @@ class _CompleteProductTabState extends State<CompleteProductTab> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget> [
                       Text(
-                        'สร้างสินค้าสำเร็จรูป', 
+                        'กำหนดสินค้าสำเร็จรูป', 
                         style: TextStyle(
                           fontSize: FontTitlePageSize,
                           color: FontColor
@@ -296,9 +259,6 @@ class _CompleteProductTabState extends State<CompleteProductTab> {
                 clipBehavior: Clip.antiAlias,
                 child: Column(
                   children: [
-                    this.imgsButTile.build(),
-                    this.detailButTile.build(),
-                    this.statusButTile.build(),
                     this.totalPriceButTile.build()
                   ]
                 ),
@@ -307,9 +267,15 @@ class _CompleteProductTabState extends State<CompleteProductTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget> [
-                this.saveBut.build(), 
+                this.basketButb.build()
               ]
-            ), 
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget> [
+                this.buyButb.build()
+              ]
+            ),
             SizedBox(height: 30,)
           ]
         ),

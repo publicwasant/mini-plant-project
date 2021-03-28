@@ -8,8 +8,10 @@ import 'package:mp_v1_0/controllers/redirect/redirect.dart';
 import 'package:mp_v1_0/controllers/fetch/fetch.dart';
 
 import 'package:mp_v1_0/controllers/theme/theme.dart';
+import 'package:mp_v1_0/controllers/text-box/text-box.dart';
 import 'package:mp_v1_0/controllers/button/button.dart';
 import 'package:mp_v1_0/controllers/button/button-oval.dart';
+import 'package:mp_v1_0/controllers/button/button-tile.dart';
 import 'package:mp_v1_0/controllers/dialog-box/dialog-box.dart';
 import 'package:mp_v1_0/controllers/loader/loader.dart';
 
@@ -42,18 +44,23 @@ class _ProfilePageState extends State<ProfilePage> {
   BuildContext context;
 
   ButtonOval imgBut;
+
+  ButtonTile addrButTile;
+  ButtonTile emailButTile;
+  ButtonTile phoneButTile;
+
   Button editBut;
   Button logoutBut;
 
   DialogBox logoutDia;
-
   Loader loading;
 
   EmployeeModel employeeModel;
   CustomerModel customerModel;
   dynamic userModel;
-
   dynamic user;
+
+  DialogBox diaEdit;
 
   _ProfilePageState ({dynamic data}) {
     this.data = data;
@@ -72,14 +79,43 @@ class _ProfilePageState extends State<ProfilePage> {
      }
     );
 
+    this.addrButTile = new ButtonTile(
+      icon: Icons.location_on,
+      title: 'ที่อยู่',
+      subTitle: '',
+      onTap: () async {
+
+      }
+    );
+
+    this.emailButTile = new ButtonTile(
+      icon: Icons.mail,
+      title: 'อีเมล',
+      subTitle: '',
+      onTap: () async {
+        
+      }
+    );
+
+    this.phoneButTile = new ButtonTile(
+      icon: Icons.phone,
+      title: 'หมายเลขโทรศัพท์',
+      subTitle: '',
+      onTap: () async {
+        
+      }
+    );
+
     this.editBut = new Button(
       icon: Icons.mode_edit,
       title: 'แก้ไขข้อมูล',
       size: 'small',
       border: 1.0,
       colors: theme.button['editColors'],
-      onTap: () {
+      onTap: () async {
         Redirect(this.context, '/profile/edit');
+
+        // this.diaEdit.show(this.context);
       }
     );
 
@@ -95,6 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
 
     this.logoutDia = new DialogBox(
+      icon: Icons.logout,
       title: 'ออกจากระบบ',
       content: <Widget> [ Text('คุณต้องการอยากจะออกจากระบบตอนนี้?') ],
       actions: <DialogBoxItem> [
@@ -114,8 +151,6 @@ class _ProfilePageState extends State<ProfilePage> {
     Read('user', then: (dynamic values) {
       this.user = values;
 
-      print(this.user);
-
       if (this.user['user_status'] == 0) { // admin
         Get('http://mini-plant.comsciproject.com/user/employee?id=' + this.user['id'].toString(), then: (dynamic response) {
             Map<String, dynamic> result = jsonDecode(response.body);
@@ -123,6 +158,9 @@ class _ProfilePageState extends State<ProfilePage> {
             if (result['status'] == 1) {
               this.loading.end(then: () {
                 this.employeeModel = EmployeeModel(fromMap: result['data'][0]);
+                this.addrButTile.subTitle = this.employeeModel.addr;
+                this.emailButTile.subTitle = this.employeeModel.email;
+                this.phoneButTile.subTitle = this.employeeModel.phone;
                 this.userModel = this.employeeModel;
 
                 this.imgBut.imgURL = this.employeeModel.imgURL;
@@ -137,6 +175,9 @@ class _ProfilePageState extends State<ProfilePage> {
           if (result['status'] == 1) {
             this.loading.end(then: () {
               this.customerModel = CustomerModel(fromMap: result['data'][0]);
+              this.addrButTile.subTitle = this.customerModel.addr;
+              this.emailButTile.subTitle = this.customerModel.email;
+              this.phoneButTile.subTitle = this.customerModel.phone;
               this.userModel = this.customerModel;
 
               this.imgBut.imgURL = this.customerModel.imgURL;
@@ -146,6 +187,27 @@ class _ProfilePageState extends State<ProfilePage> {
         });
       }
     });
+
+    this.diaEdit = DialogBox(
+      icon: Icons.mode_edit,
+      title: 'แก้ไขข้อมูล',
+      content: <Widget> [
+        Column(
+          children: <Widget> [
+            this.imgBut.build(),
+            TextBox(label: 'asd').build()
+          ],
+        )
+      ],
+      actions: <DialogBoxItem> [
+        DialogBoxItem(text: 'แก้ไข', onPressed: () {
+          Navigator.of(context, rootNavigator: true).pop();
+        }),
+        DialogBoxItem(text: 'ยกเลิก', onPressed: () {
+          Navigator.of(context, rootNavigator: true).pop();
+        })
+      ]
+    );
   }
 
   @override
@@ -203,40 +265,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           clipBehavior: Clip.antiAlias,
                           child: Column(
                             children: [
-                              ListTile(
-                                leading: Icon(Icons.location_on),
-                                title: const Text('ที่อยู่'),
-                                subtitle: Text(
-                                  this.userModel.addr,
-                                  style: TextStyle(
-                                    fontSize: FontDetailSize,
-                                    color: FontColor
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.mail),
-                                title: const Text('อีเมล'),
-                                subtitle: Text(
-                                  this.userModel.email,
-                                  style: TextStyle(
-                                    fontSize: FontDetailSize,
-                                    color: FontColor
-                                  ),
-                                ),
-                              ),
-                              ListTile(
-                                leading: Icon(Icons.phone),
-                                title: const Text('หมายเลขโทรศัพท์'),
-                                subtitle: Text(
-                                  this.userModel.phone,
-                                  style: TextStyle(
-                                    fontSize: FontDetailSize,
-                                    color: FontColor
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 15),
+                              this.addrButTile.build(),
+                              this.emailButTile.build(),
+                              this.phoneButTile.build(),
                             ],
                           ),
                         ),
