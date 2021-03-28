@@ -160,7 +160,7 @@ class ProductItem {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(this.radius),
                       ),
-                      child: (this.productModel.status != '') ? Container(
+                      child: (this.productModel.status == 1) ? Container(
                         height: 30,
                         width: this.size['width'],
                         decoration: BoxDecoration(
@@ -175,7 +175,7 @@ class ProductItem {
                         ),
                         child: Center(
                           child: Text(
-                            this.productModel.status,
+                            this.productModel.getStatus(),
                             style: TextStyle(
                               color: Colors.red,
                               fontSize: 12,

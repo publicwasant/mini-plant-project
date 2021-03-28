@@ -179,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             (this.user['user_status'] == 0) ? (
                               Text(
-                                this.userModel.username + ' (Admin)',
+                                this.userModel.username + ' (ผู้ดูแล)',
                                 style: TextStyle(fontSize: FontSubTitleSize),
                               )
                             ) : Container()

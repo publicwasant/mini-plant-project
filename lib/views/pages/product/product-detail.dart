@@ -45,6 +45,8 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
     this.option = (data['option'] != null) ? data['option'] : 0;
     this.productModel = data['productModel'];
 
+    // this.productModel = new ProductModel();
+
     // Testcase
     // this.productModel = new ProductModel(
     //   id: 10,
@@ -136,7 +138,7 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
     return Scaffold(
       backgroundColor: BackgroundColor,
       appBar: AppBar(
-        title: Text(this.productModel.type)
+        title: Text(this.productModel.getType())
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -194,19 +196,19 @@ class _ProductsDetailPageState extends State<ProductsDetailPage> {
                         )
                       ),
                     ),
-                    (this.productModel.status != '') ? Container(
+                    Container(
                       child: ListTile(
                         leading: Icon(Icons.link),
                         title: const Text('สถานะ'),
                         subtitle: Text(
-                          this.productModel.status,
+                          this.productModel.getStatus(),
                           style: TextStyle(
-                            fontSize: FontStatusSize,
-                            color: Colors.red
+                            fontSize: FontDetailSize,
+                            color: FontColor
                           ),
                         ),
                       ),
-                    ) : Container(),
+                    ),
                     Container(
                       child: ListTile(
                         leading: Icon(Icons.sentiment_very_satisfied),

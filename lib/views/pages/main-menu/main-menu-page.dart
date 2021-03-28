@@ -80,7 +80,7 @@ class _MainMenuPageState extends State<MainMenuPage> {
               this.profileBut.imgURL = this.employeeModel.imgURL;
               this.profileBut.title = this.employeeModel.name;
               this.profileBut.subTitles = [
-                'ชื่อผู้ใช้: ' + this.employeeModel.username + ' (Admin)',
+                'ชื่อผู้ใช้: ' + this.employeeModel.username + ' (ผู้ดูแล)',
                 'อีเมล' + this.employeeModel.email
               ];
 
