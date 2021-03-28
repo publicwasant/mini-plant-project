@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:mp_v1_0/controllers/loader/loader.dart';
 import 'package:mp_v1_0/controllers/button/button-tile.dart';
 import 'package:mp_v1_0/controllers/fetch/fetch.dart';
 
@@ -58,62 +59,111 @@ class basket extends StatefulWidget {
 }
 
 class _basketState extends State<basket> {
-  List<dynamic> result = [];
+  Loader loading;
+  List<dynamic> orderItems = [];
+
   _basketState() {
-    Get('http://mini-plant.comsciproject.com/order/detail',
-        then: (dynamic response) {
+    
+    this.loading = new Loader(begin: true);
+
+    Get('http://mini-plant.comsciproject.com/order/detail', then: (dynamic response) {
       dynamic result = jsonDecode(response.body);
-      print(111);
-      print(result);
+
+      void fetchProduct (items, ind) {
+        if (ind > items.length-1) {
+          this.loading.end(then: () {
+            setState(() {});
+          });
+          return;
+        }
+
+        if (items[ind]['order_id'] == -1) {
+          Get('http://mini-plant.comsciproject.com/product?id=' + items[ind]['pr_id'].toString(), then: (dynamic response) {
+            dynamic result = jsonDecode(response.body);
+
+            if (result['status'] == 1) {
+              this.orderItems.add({
+                'orderDetail': items[ind],
+                'product': result['data'][0]
+              });
+            }
+
+            fetchProduct(items, ind+1);
+          });
+        } else {
+          fetchProduct(items, ind+1);
+        }
+      };
+      
       if (result['status'] == 1) {
-        this.result = result['data'];
-        setState(() {});
+        fetchProduct(result['data'], 0);
+      } else {
+        this.orderItems = [];
       }
-    }, error: (dynamic e) {
-      print(e);
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-            children: this.result.map((e) {
-          return Container(
-            padding: const EdgeInsets.fromLTRB(30, 2, 30, 2),
-            child: Card(
-              clipBehavior: Clip.antiAlias,
-              child: Column(children: [
-                ButtonTile(
-                        icon: Icons.spa,
-                        title: getName(e['pr_id'].toString()),
-                        subTitle: 'ประเภท : สินค้าสำเร็จรูป',
-                        onTap: () async {})
-                    .build()
-              ]),
+      body: (!this.loading.isBegin) ? SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(15),
+          child: Card(
+            child: Column(
+              children: this.orderItems.map((item) => ButtonTile(
+                icon: Icons.spa,
+                title: 'หมายเลข: ' + item['orderDetail']['od_id'].toString(),
+                subTitle: item['product']['pr_name']
+              ).build()).toList(),
             ),
-          );
-        }).toList()
-            // [
-            //   Container(
-            //     padding: const EdgeInsets.fromLTRB(30, 2, 30, 2),
-            //     child: Card(
-            //       clipBehavior: Clip.antiAlias,
-            //       child: Column(children: [
-            //         ButtonTile(
-            //                 icon: Icons.image,
-            //                 title: 'ต้นตะบองเพรช',
-            //                 subTitle: 'ประเภท : สินค้าสำเร็จรูป',
-            //                 onTap: () async {})
-            //             .build()
-            //       ]),
-            //     ),
-            //   ),
-            // ],
-
-            ),
-      ),
+          )
+        ),
+      ):  Center(
+        child: this.loading.build()
+      )
     );
+
+
+    // return Scaffold(
+    //   body: SingleChildScrollView(
+    //     child: Column(
+    //         children: this.result.map((e) {
+    //       return Container(
+    //         padding: const EdgeInsets.fromLTRB(30, 2, 30, 2),
+    //         child: Card(
+    //           clipBehavior: Clip.antiAlias,
+    //           child: Column(children: [
+    //             ButtonTile(
+    //                     icon: Icons.spa,
+    //                     title: getName(e['pr_id'].toString()),
+    //                     subTitle: 'ประเภท : สินค้าสำเร็จรูป',
+    //                     onTap: () async {})
+    //                 .build()
+    //           ]),
+    //         ),
+    //       );
+    //     }).toList()
+    //         // [
+    //         //   Container(
+    //         //     padding: const EdgeInsets.fromLTRB(30, 2, 30, 2),
+    //         //     child: Card(
+    //         //       clipBehavior: Clip.antiAlias,
+    //         //       child: Column(children: [
+    //         //         ButtonTile(
+    //         //                 icon: Icons.image,
+    //         //                 title: 'ต้นตะบองเพรช',
+    //         //                 subTitle: 'ประเภท : สินค้าสำเร็จรูป',
+    //         //                 onTap: () async {})
+    //         //             .build()
+    //         //       ]),
+    //         //     ),
+    //         //   ),
+    //         // ],
+
+    //         ),
+    //   ),
+    // );
   }
 
   String getName(id) {
