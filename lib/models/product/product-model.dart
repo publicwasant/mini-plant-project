@@ -97,7 +97,7 @@ class ProductModel {
     this.detail = data['pr_detail'];
     this.type = data['pr_type'];
     this.status = data['pr_status'];
-    this.price = data['pr_price'];
+    this.price = data['pr_price'].toDouble();
     this.promo_id = data['pr_promo_id'];
   }
 }
